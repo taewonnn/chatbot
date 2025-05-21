@@ -86,7 +86,9 @@ audio,
 video {
   margin: 0;
   padding: 0;
+  border: 0;
   font-size: 100%;
+  font: inherit;
   vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -105,8 +107,6 @@ section {
 }
 body {
   line-height: 1;
-  -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none; /* Firefox */
 }
 ol,
 ul {
@@ -126,40 +126,4 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-}
-
-input:focus,
-textarea:focus,
-select:focus,
-button:focus {
-  outline: none; /* 기본 outline 제거 */
-  border-color: inherit; /* 기본 보더 색상 유지 (원래의 보더 색상 유지) */
-  box-shadow: none; /* 브라우저 기본 쉐도우 제거 */
-}
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-select::-ms-expand {
-  display: none;
-}
-
-/* Firefox  */
-input[type='number'] {
-  -moz-appearance: textfield;
-}
-
-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: none; /* 기본 화살표 제거 */
-}
-
-body::-webkit-scrollbar {
-  display: none;
 }
