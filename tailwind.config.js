@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
+    './index.html',
     './src/**/*.{js,jsx,ts,tsx}', // Tailwind가 적용될 파일 경로
   ],
   theme: {
@@ -24,7 +25,7 @@ export default {
           'sans-serif',
         ],
       },
-      
+
       colors: {
         666: '#666666',
         999: '#999999',
