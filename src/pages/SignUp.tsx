@@ -1,5 +1,7 @@
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { auth } from '../firebase/firebase';
 
 interface SignUpForm {
   id: string;
@@ -12,6 +14,11 @@ interface SignUpForm {
 }
 
 function SignUp() {
+  const navigate = useNavigate();
+
+  /**
+   * form 상태 관리
+   */
   const {
     register,
     handleSubmit,
@@ -19,18 +26,18 @@ function SignUp() {
     formState: { errors },
   } = useForm<SignUpForm>();
 
-  const password = watch('password');
+  const password = watch('password'); // 비밀번호 / 비밀번호 확인 일치 여부 확인
 
   /**
    * 제출함수
    */
-  const onSubmit = (data: SignUpForm) => {
+  const onSubmit = async (data: SignUpForm) => {
     // 제출 data 확인
-    console.log(data);
-
-    // 비밀번호 hash 처리
+    // console.log(data);
 
     // firebase 저장
+    const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+    console.log(userCredential.user);
 
     // 페이지 이동
   };
@@ -47,25 +54,25 @@ function SignUp() {
         {/* form */}
         <div className="rounded-2xl bg-white p-6 shadow-xl md:p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* 아이디 */}
+            {/* 이메일 */}
             <div>
-              <label htmlFor="id" className="mb-2 block text-sm font-medium text-gray-700">
-                아이디
+              <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
+                이메일
               </label>
               <input
-                type="text"
-                id="id"
-                placeholder="아이디를 입력해주세요"
+                type="email"
+                id="email"
+                placeholder="이메일을 입력해주세요"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                {...register('id', {
-                  required: '아이디를 입력해주세요.',
+                {...register('email', {
+                  required: '이메일을 입력해주세요',
                   pattern: {
-                    value: /^[a-zA-Z0-9]{4,12}$/,
-                    message: '아이디는 영문/숫자 4~12자 사이로 입력해주세요',
+                    value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+                    message: '올바른 이메일 형식이 아닙니다.',
                   },
                 })}
               />
-              {errors.id && <p className="mt-1 text-sm text-red-500">{errors.id.message}</p>}
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             {/* 비밀번호 */}
@@ -80,12 +87,12 @@ function SignUp() {
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 {...register('password', {
                   required: '비밀번호를 입력해주세요.',
-                  minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
-                  maxLength: { value: 12, message: '비밀번호는 최대 20자 이하이어야 합니다.' },
-                  pattern: {
-                    value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?]).{8,}$/,
-                    message: '영문, 숫자, 특수문자를 모두 포함해야 합니다.',
-                  },
+                  // minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
+                  // maxLength: { value: 12, message: '비밀번호는 최대 20자 이하이어야 합니다.' },
+                  // pattern: {
+                  //   value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?]).{8,}$/,
+                  //   message: '영문, 숫자, 특수문자를 모두 포함해야 합니다.',
+                  // },
                 })}
               />
               {errors.password && (
@@ -114,27 +121,6 @@ function SignUp() {
               {errors.passwordConfirm && (
                 <p className="mt-1 text-sm text-red-500">{errors.passwordConfirm.message}</p>
               )}
-            </div>
-
-            {/* 이메일 */}
-            <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
-                이메일
-              </label>
-              <input
-                type="email"
-                id="email"
-                placeholder="이메일을 입력해주세요"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                {...register('email', {
-                  required: '이메일을 입력해주세요',
-                  pattern: {
-                    value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
-                    message: '올바른 이메일 형식이 아닙니다.',
-                  },
-                })}
-              />
-              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             {/* 이름 */}
