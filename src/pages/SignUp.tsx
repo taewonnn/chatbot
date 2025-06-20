@@ -1,7 +1,9 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../firebase/firebase';
+import { auth, db } from '../firebase/firebase';
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { useState } from 'react';
 
 interface SignUpForm {
   id: string;
@@ -16,6 +18,9 @@ interface SignUpForm {
 function SignUp() {
   const navigate = useNavigate();
 
+  /** 아이디 사용가능 상태 관리*/
+  const [emailExist, setEmailExist] = useState(true);
+
   /**
    * form 상태 관리
    */
@@ -29,17 +34,67 @@ function SignUp() {
   const password = watch('password'); // 비밀번호 / 비밀번호 확인 일치 여부 확인
 
   /**
+   * 아이디 중복확인
+   */
+  const checkEmailExist = async (email: string) => {
+    const userRef = collection(db, 'users');
+    const idQuery = query(userRef, where('email', '==', email));
+    const snapshot = await getDocs(idQuery);
+
+    if (!snapshot.empty) {
+      alert('이미 존재하는 이메일입니다.'); // 중복
+      return;
+    } else {
+      setEmailExist(false); // 사용 가능 상태 변경
+    }
+  };
+
+  const handleCheckEmail = () => {
+    const currentEmail = watch('email');
+    if (!currentEmail) {
+      alert('이메일 입력해!');
+      return;
+    }
+
+    if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(currentEmail)) {
+      alert('올바른 이메일 형식이 아닙니다.');
+      return;
+    }
+
+    checkEmailExist(currentEmail); // 아이디 중복확인
+  };
+
+  /**
    * 제출함수
    */
   const onSubmit = async (data: SignUpForm) => {
     // 제출 data 확인
     // console.log(data);
 
-    // firebase 저장
-    const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-    console.log(userCredential.user);
+    // 중복확인 여부 확인
+    if (emailExist) {
+      alert('이메일 중복확인 먼저');
+      return;
+    }
 
-    // 페이지 이동
+    // firebase Auth 저장
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      console.log(userCredential.user);
+
+      // users DB에 저장
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        name: data.name,
+        gender: data.gender,
+        phone: data.phone,
+        email: data.email,
+        createdAt: new Date().toISOString(),
+      });
+      // navigate('/signin');  // 페이지 이동
+    } catch (e) {
+      console.log(e);
+      alert((e as any).message);
+    }
   };
 
   return (
@@ -63,6 +118,7 @@ function SignUp() {
                 type="email"
                 id="email"
                 placeholder="이메일을 입력해주세요"
+                disabled={!emailExist}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 {...register('email', {
                   required: '이메일을 입력해주세요',
@@ -72,6 +128,14 @@ function SignUp() {
                   },
                 })}
               />
+              <button
+                type="button"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-white"
+                onClick={handleCheckEmail}
+              >
+                중복확인
+              </button>
+
               {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
