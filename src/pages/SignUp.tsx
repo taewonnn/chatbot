@@ -77,24 +77,41 @@ function SignUp() {
       return;
     }
 
-    // firebase Auth 저장
+    // 1- firebase Auth 저장
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       console.log(userCredential.user);
 
-      // users DB에 저장
-      await setDoc(doc(db, 'users', userCredential.user.uid), {
-        name: data.name,
-        gender: data.gender,
-        phone: data.phone,
-        email: data.email,
-        createdAt: new Date().toISOString(),
-      });
+      try {
+        // 2- users DB에 저장
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          name: data.name,
+          gender: data.gender,
+          phone: data.phone,
+          email: data.email,
+          createdAt: new Date().toISOString(),
+        });
+      } catch (firestoreError) {
+        // Firestore 저장 실패 시 Auth 계정도 삭제
+        await userCredential.user.delete();
+        console.log(firestoreError);
+        alert('회원가입 중 오류 발생 - 다시 시도해주세요');
+      }
       // navigate('/signin');  // 페이지 이동
-    } catch (e) {
-      console.log(e);
-      alert((e as any).message);
+    } catch (authError) {
+      console.log(authError);
+      // Auth 회원가입 실패
+      if ((authError as any).code === 'auth/email-already-in-use') {
+        alert('이미 존재하는 이메일입니다.');
+      } else if ((authError as any).code === 'auth/weak-password') {
+        alert('비밀번호가 너무 약합니다.');
+      } else {
+        alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+      }
     }
+    // 성공 시
+    console.log('success');
+    navigate('/signin');
   };
 
   return (
