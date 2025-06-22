@@ -73,7 +73,7 @@ function SignUp() {
 
     // 중복확인 여부 확인
     if (emailExist) {
-      alert('이메일 중복확인 먼저');
+      alert('이메일 중복확인 후 다시 시도해주세요');
       return;
     }
 
