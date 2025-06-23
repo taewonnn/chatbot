@@ -1,5 +1,6 @@
 import { TbLayoutSidebarRightCollapseFilled } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 interface ISideBar {
   isOpen: boolean;
@@ -9,6 +10,17 @@ interface ISideBar {
 const qs = ['react 상태관리 추천', 'vite vs pmpn', 'jQuery 버전 이슈'];
 
 export default function SideBar({ isOpen, onToggle }: ISideBar) {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/signin');
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <aside
       className={`relative h-screen flex-shrink-0 overflow-hidden bg-blue-500 transition-all duration-300 ${isOpen ? 'w-60' : 'w-0'} `}
@@ -42,6 +54,11 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
           <TbLayoutSidebarRightCollapseFilled className="h-6 w-6 text-gray-700" />
         </button>
       )}
+
+      {/* 로그아웃 */}
+      <button onClick={handleLogout} className="mt-auto p-4 text-white hover:bg-blue-600">
+        로그아웃
+      </button>
     </aside>
   );
 }
