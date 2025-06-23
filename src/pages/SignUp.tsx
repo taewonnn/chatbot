@@ -45,6 +45,7 @@ function SignUp() {
       alert('이미 존재하는 이메일입니다.'); // 중복
       return;
     } else {
+      alert('사용 가능한 이메일입니다.');
       setEmailExist(false); // 사용 가능 상태 변경
     }
   };
