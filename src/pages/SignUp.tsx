@@ -91,6 +91,7 @@ function SignUp() {
       try {
         // 2- users DB에 저장
         await setDoc(doc(db, 'users', userCredential.user.uid), {
+          uid: userCredential.user.uid,
           name: data.name,
           gender: data.gender,
           phone: data.phone,
