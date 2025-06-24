@@ -18,6 +18,7 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
       await logout();
       navigate('/signin');
     } catch (e) {
+      alert('로그아웃 중 오류 발생 - 다시 시도해주세요');
       console.log(e);
     }
   };
