@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/firebase';
@@ -82,6 +82,11 @@ function SignUp() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       console.log(userCredential.user);
+
+      // Auth -> displayName 설정
+      await updateProfile(userCredential.user, {
+        displayName: data.name,
+      });
 
       try {
         // 2- users DB에 저장
