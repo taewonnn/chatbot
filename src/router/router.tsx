@@ -5,6 +5,7 @@ import SignUp from '../pages/SignUp';
 import AuthGuard from '../guards/AuthGuard';
 import Chat from '../pages/Chat';
 import Settings from '../pages/Settings';
+import KakaoCallback from '../pages/KakaoCallback';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard mode="guest">
         <SignUp />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: '/kakaoCallbck',
+    element: (
+      <AuthGuard mode="guest">
+        <KakaoCallback />
       </AuthGuard>
     ),
   },

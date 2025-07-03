@@ -2,6 +2,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebase';
+import { VITE_KAKAO_REDIRECT_URI, VITE_KAKAO_REST_API_KEY } from '../config/config';
 
 interface SignInForm {
   email: string;
@@ -10,6 +11,10 @@ interface SignInForm {
 
 function SignIn() {
   const navigate = useNavigate();
+
+  const handleKakaoLogin = () => {
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${VITE_KAKAO_REST_API_KEY}&redirect_uri=${VITE_KAKAO_REDIRECT_URI}&response_type=code`;
+  };
 
   /**
    * form 상태 관리
@@ -106,7 +111,10 @@ function SignIn() {
           </form>
 
           <div className="mt-5 flex flex-col gap-3">
-            <button className="flex-1 transform rounded-lg bg-yellow-500 px-6 py-3 font-medium text-white transition-all duration-200 hover:scale-105 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
+            <button
+              onClick={handleKakaoLogin}
+              className="flex-1 transform rounded-lg bg-yellow-500 px-6 py-3 font-medium text-white transition-all duration-200 hover:scale-105 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+            >
               카카오 로그인
             </button>
             <button className="flex-1 transform rounded-lg bg-green-600 px-6 py-3 font-medium text-white transition-all duration-200 hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
