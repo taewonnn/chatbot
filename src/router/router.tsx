@@ -25,7 +25,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/kakaoCallbck',
+    path: '/auth/kakao/callback',
     element: (
       <AuthGuard mode="guest">
         <KakaoCallback />
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="chat" replace /> },
       { path: 'chat', element: <Chat /> },
       { path: 'settings', element: <Settings /> },
-      { path: '*', element: <></> },
+      // { path: '*', element: <></> },
     ],
   },
 ]);
