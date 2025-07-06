@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 export default function KakaoCallback() {
   const [authCode, setAuthCode] = useState<string | null>(null);
@@ -12,6 +11,8 @@ export default function KakaoCallback() {
     }
     console.log('인가코드', authCode);
   }, []);
+
+  // 2. 받은 인가코드로 토큰 발급 받기
 
   return <>kakao callback</>;
 }
