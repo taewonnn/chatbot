@@ -15,10 +15,10 @@ export default function KakaoCallback() {
       // 뒤로 가기 방지
       window.history.replaceState(null, '', window.location.pathname);
     } else {
-      // 3초 간 대기 후 인가 코드 없으면 로그인 페이지로
-      setTimeout(() => {
-        navigate('/signin');
-      }, 3000);
+      // @todo -> test동안 주석 / 3초 간 대기 후 인가 코드 없으면 로그인 페이지로
+      // setTimeout(() => {
+      //   navigate('/signin');
+      // }, 3000);
     }
     console.log('인가코드', authCode);
   }, []);
