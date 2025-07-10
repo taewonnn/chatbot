@@ -4,10 +4,11 @@ import { useGetKakaoToken } from '../api/useKakao';
 
 export default function KakaoCallback() {
   const navigate = useNavigate();
-  const [authCode, setAuthCode] = useState<string | null>(null);
+  const [authCode, setAuthCode] = useState<string | null>(null); // 인가 코드 저장
+  const [kakaoToken, setKakaoToken] = useState<string | null>(null); // 카카오 토큰 저장
 
   useEffect(() => {
-    // 1. 인가코드 추출
+    // 1. 카카오 로그인 하면 -> 인가코드 url에 줌 -> 인가코드 추출
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('code')) {
       setAuthCode(urlParams.get('code') || null);
@@ -30,7 +31,8 @@ export default function KakaoCallback() {
     if (authCode) {
       getKakaoToken(authCode, {
         onSuccess: data => {
-          console.log('토큰 받음?', data);
+          console.log('토큰 받기 성공?', data);
+          setKakaoToken(data?.access_token || null); // 토큰 저장
         },
         onError: error => {
           console.log('토큰 받는 중 에러', error);
