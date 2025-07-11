@@ -1,6 +1,7 @@
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import axios from 'axios';
 
+/** authCode로 토큰 받기 */
 const getKakaoToken = async (authCode: string) => {
   const res = await axios.post('https://kauth.kakao.com/oauth/token', null, {
     params: {
@@ -11,12 +12,28 @@ const getKakaoToken = async (authCode: string) => {
     },
   });
 
-  // console
-  // console.log('토큰 받음?',res?.data);
-
   return res?.data;
 };
 
 export const useGetKakaoToken = () => {
   return useMutation({ mutationFn: getKakaoToken });
+};
+
+/** 토큰으로 닉네임 받기 */
+const getKakaoProfile = async (token: string) => {
+  const res = await axios.get('https://kapi.kakao.com/user/me', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res?.data;
+};
+
+export const useGetKakaoProfile = (token: string) => {
+  useQuery({
+    queryKey: ['kakaoProfile', token],
+    queryFn: () => getKakaoProfile(token),
+    enabled: !!token,
+  });
 };
