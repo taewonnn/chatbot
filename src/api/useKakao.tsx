@@ -31,9 +31,9 @@ const getKakaoProfile = async (token: string) => {
 };
 
 export const useGetKakaoProfile = (token: string) => {
-  useQuery({
+  return useQuery({
     queryKey: ['kakaoProfile', token],
     queryFn: () => getKakaoProfile(token),
-    enabled: !!token,
+    enabled: !!token, // token이 있을 때만 실행
   });
 };
