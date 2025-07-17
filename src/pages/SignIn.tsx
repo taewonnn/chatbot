@@ -1,7 +1,5 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../firebase/firebase';
 import { VITE_KAKAO_REDIRECT_URI, VITE_KAKAO_REST_API_KEY } from '../config/config';
 import { signInUser } from '../api/auth';
 
