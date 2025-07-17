@@ -1,8 +1,25 @@
-// import { onRequest } from 'firebase-functions/v2/https';
-// import * as logger from 'firebase-functions/logger';
 import {onCall} from "firebase-functions/v2/https";
 import axios from "axios";
+import * as admin from "firebase-admin";
 import {getAuth} from "firebase-admin/auth";
+import * as path from "path";
+
+// Firebase Admin SDK 초기화
+try {
+  // 서비스 계정 키 파일 경로
+  const serviceAccountPath = path.join(__dirname, "../serviceAccountKey.json");
+
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const serviceAccount = require(serviceAccountPath);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+  console.log("서비스 계정 키로 Firebase Admin SDK 초기화 완료");
+} catch (error) {
+  // 기본 초기화
+  admin.initializeApp();
+  console.log("기본 설정으로 Firebase Admin SDK 초기화 완료");
+}
 
 /** 테스트 함수 */
 export const test = onCall(async () => {
