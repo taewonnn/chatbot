@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebase';
 import { VITE_KAKAO_REDIRECT_URI, VITE_KAKAO_REST_API_KEY } from '../config/config';
+import { signInUser } from '../api/auth';
 
 interface SignInForm {
   email: string;
@@ -30,8 +31,9 @@ function SignIn() {
    */
   const onSubmit = async (data: SignInForm) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-      console.log('로그인 성공:', userCredential.user);
+      // 로그인 커스텀 훅
+      const user = await signInUser(data.email, data.password);
+      console.log('로그인 성공:', user);
       navigate('/'); // 홈으로 이동
     } catch (e) {
       console.log(e);
