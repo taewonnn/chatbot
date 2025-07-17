@@ -1,11 +1,11 @@
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase/firebase';
-import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { signUpUser } from '../api/auth'; // API 함수 import
 import { useState } from 'react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../firebase/firebase';
 
-interface SignUpForm {
+export interface SignUpForm {
   id: string;
   password: string;
   passwordConfirm: string;
@@ -69,56 +69,29 @@ function SignUp() {
    * 제출함수
    */
   const onSubmit = async (data: SignUpForm) => {
-    // 제출 data 확인
-    // console.log(data);
-
     // 중복확인 여부 확인
     if (emailExist) {
       alert('이메일 중복확인 후 다시 시도해주세요');
       return;
     }
 
-    // 1- firebase Auth 저장
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      console.log(userCredential.user);
-
-      // Auth -> displayName 설정
-      await updateProfile(userCredential.user, {
-        displayName: data.name,
-      });
-
-      try {
-        // 2- users DB에 저장
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
-          uid: userCredential.user.uid,
-          name: data.name,
-          gender: data.gender,
-          phone: data.phone,
-          email: data.email,
-          createdAt: new Date().toISOString(),
-        });
-      } catch (firestoreError) {
-        // Firestore 저장 실패 시 Auth 계정도 삭제
-        await userCredential.user.delete();
-        console.log(firestoreError);
-        alert('회원가입 중 오류 발생 - 다시 시도해주세요');
-      }
-      // navigate('/signin');  // 페이지 이동
-    } catch (authError) {
-      console.log(authError);
+      // 회원가입 로직
+      await signUpUser(data);
+      // console
+      console.log('signup success!');
+      navigate('/signin');
+    } catch (error) {
+      console.log('signup error', error);
       // Auth 회원가입 실패
-      if ((authError as any).code === 'auth/email-already-in-use') {
+      if ((error as any).code === 'auth/email-already-in-use') {
         alert('이미 존재하는 이메일입니다.');
-      } else if ((authError as any).code === 'auth/weak-password') {
+      } else if ((error as any).code === 'auth/weak-password') {
         alert('비밀번호가 너무 약합니다.');
       } else {
         alert('회원가입에 실패했습니다. 다시 시도해주세요.');
       }
     }
-    // 성공 시
-    console.log('success');
-    navigate('/signin');
   };
 
   return (
