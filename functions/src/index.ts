@@ -2,9 +2,10 @@
 // import * as logger from 'firebase-functions/logger';
 import {onCall} from "firebase-functions/v2/https";
 import axios from "axios";
+import {getAuth} from "firebase-admin/auth";
 
 /** 테스트 함수 */
-export const test = onCall(async (request) => {
+export const test = onCall(async () => {
   try {
     return {
       message: "테스트 함수 실행",
@@ -13,6 +14,16 @@ export const test = onCall(async (request) => {
     console.error("테스트 함수 에러:", error);
     throw new Error("테스트 함수 실패");
   }
+});
+
+/** SNS custom 토큰 발급 */
+export const createCustomToken = onCall(async (request) => {
+  const {uid} = request.data;
+
+  const auth = getAuth();
+  const customToken = await auth.createCustomToken(uid);
+
+  return {customToken};
 });
 
 /** 카카오 프로필 받기 */
