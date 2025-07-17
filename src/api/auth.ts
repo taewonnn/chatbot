@@ -1,11 +1,13 @@
 import {
   createUserWithEmailAndPassword,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
 import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
 import { SignUpForm } from '../pages/SignUp';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 /** 로그인 커스텀 훅 */
 export const signInUser = async (email: string, password: string) => {
@@ -85,7 +87,19 @@ export const signInOrSignUpSnsUser = async (snsData: SnsUserData) => {
     if (!snapshot.empty) {
       // 기존 유저인 경우 -> 로그인
       console.log('기존 유저 -> 로그인 처리');
-      return snapshot.docs[0].data();
+
+      const userData = snapshot.docs[0].data();
+
+      // Firebase Functions에서 커스텀 토큰 생성
+      const functions = getFunctions();
+      const createCustomTokenFunction = httpsCallable(functions, 'createCustomToken');
+      const result = await createCustomTokenFunction({ uid: userData.uid });
+
+      // 커스텀 토큰으로 로그인
+      const customToken = (result?.data as { customToken?: string })?.customToken;
+
+      const userCredential = await signInWithCustomToken(auth, customToken || '');
+      return userCredential.user;
     }
 
     // 새로운 유저

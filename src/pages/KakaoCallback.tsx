@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetKakaoToken } from '../api/useKakao';
+import { useGetKakaoProfile, useGetKakaoToken } from '../api/useKakao';
+import { signInOrSignUpSnsUser } from '../api/auth';
+import { FadeLoader } from 'react-spinners';
 
 export default function KakaoCallback() {
   const navigate = useNavigate();
@@ -41,5 +43,38 @@ export default function KakaoCallback() {
     }
   }, [authCode]);
 
-  return <>kakao callback</>;
+  // 3. 토큰으로 닉네임 받기
+  const { data: profileData } = useGetKakaoProfile(kakaoToken || '');
+
+  useEffect(() => {
+    if (kakaoToken && profileData) {
+      const handleKakaoLogin = async () => {
+        try {
+          console.log('kakao 로그인 처리 시작');
+
+          const user = await signInOrSignUpSnsUser({
+            provider: 'kakao',
+            id: profileData?.id + '' || '',
+            name:
+              profileData.kakao_account.profile.name || profileData.kakao_account.profile.nickname,
+            email: profileData?.kakao_account?.email || undefined,
+          });
+
+          console.log('kakao 로그인 처리 완료', user);
+          navigate('/chat');
+        } catch (error) {
+          console.log(error);
+          navigate('/signin');
+        }
+      };
+
+      handleKakaoLogin();
+    }
+  }, [kakaoToken, profileData]);
+
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <FadeLoader color="#4D607B" />
+    </div>
+  );
 }

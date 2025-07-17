@@ -26,7 +26,7 @@ const getKakaoProfile = async (token: string) => {
   const getKakaoProfileFunction = httpsCallable(functions, 'getKakaoProfile');
 
   const res = await getKakaoProfileFunction({ token });
-  return res?.data;
+  return res?.data as { id: number; [key: string]: any };
 };
 
 export const useGetKakaoProfile = (token: string) => {
