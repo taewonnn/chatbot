@@ -34,14 +34,21 @@ function SignIn() {
       console.log('로그인 성공:', user);
       navigate('/'); // 홈으로 이동
     } catch (e) {
-      console.log(e);
+      console.log('로그인 실패:', e);
       if (e instanceof Error) {
-        if (e.message.includes('user-not-found')) {
+        if (e.message === '존재하지 않는 이메일입니다.') {
           alert('존재하지 않는 이메일입니다.');
-        } else if (e.message.includes('wrong-password')) {
-          alert('비밀번호가 일치하지 않습니다.');
+        } else if (e.message === 'SNS 계정입니다. SNS 로그인을 이용해주세요.') {
+          alert('SNS 계정입니다. SNS 로그인을 이용해주세요.');
         } else {
-          alert('로그인에 실패했습니다. 다시 시도해주세요.');
+          const firebaseError = e as any;
+          if (firebaseError.code === 'auth/user-not-found') {
+            alert('존재하지 않는 이메일입니다.');
+          } else if (firebaseError.code === 'auth/invalid-credential') {
+            alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+          } else {
+            alert('로그인에 실패했습니다. 다시 시도해주세요.');
+          }
         }
       }
     }

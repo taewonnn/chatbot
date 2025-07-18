@@ -11,27 +11,25 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 
 /** 로그인 커스텀 훅 */
 export const signInUser = async (email: string, password: string) => {
-  try {
-    // 1. 사용자 정보 확인
-    const userRef = collection(db, 'users');
-    const q = query(userRef, where('email', '==', email));
-    const snapshot = await getDocs(q);
+  // 1. 사용자 정보 확인
+  const userRef = collection(db, 'users');
+  const q = query(userRef, where('email', '==', email));
+  const snapshot = await getDocs(q);
 
-    if (!snapshot.empty) {
-      const userData = snapshot.docs[0].data();
+  if (!snapshot.empty) {
+    const userData = snapshot.docs[0].data();
 
-      // 2. SNS 사용자 차단
-      if (userData.isSnsUser) {
-        alert('SNS 계정입니다. SNS 로그인을 이용해주세요.');
-        throw new Error('SNS 계정입니다. SNS 로그인을 이용해주세요.');
-      }
-
-      // 3. 일반 로그인 진행
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      return userCredential.user;
+    // 2. SNS 사용자 차단
+    if (userData.isSnsUser) {
+      throw new Error('SNS 계정입니다. SNS 로그인을 이용해주세요.');
     }
-  } catch (error) {
-    console.log(error);
+
+    // 3. 일반 로그인 진행
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  } else {
+    // 사용자가 존재하지 않는 경우
+    throw new Error('존재하지 않는 이메일입니다.');
   }
 };
 
