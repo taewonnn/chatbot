@@ -1,25 +1,28 @@
-import { TbLayoutSidebarRightExpandFilled } from 'react-icons/tb';
+import { FiMenu, FiRefreshCw } from 'react-icons/fi';
 
 interface IGlobalHeader {
-  isOpen: boolean;
   onToggle: () => void;
 }
 
-export default function GlobalHeader({ isOpen, onToggle }: IGlobalHeader) {
+export default function GlobalHeader({ onToggle }: IGlobalHeader) {
   return (
-    <header className="flex h-16 items-center border-b bg-white px-4">
-      {/* 사이드바가 닫혔을 때만 열기 버튼 보여주기 */}
-      {!isOpen && (
-        <button
-          onClick={onToggle}
-          className="mr-4 rounded p-1 hover:bg-gray-100 focus:outline-none"
-        >
-          <TbLayoutSidebarRightExpandFilled className="h-6 w-6 text-gray-700" />
+    <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4">
+      {/* 왼쪽: 메뉴 버튼 */}
+      <div className="flex items-center">
+        <button onClick={onToggle} className="rounded-lg p-2 hover:bg-gray-100">
+          <FiMenu className="h-5 w-5 text-gray-700" />
         </button>
-      )}
+      </div>
 
-      <h1 className="text-xl font-semibold">Chat Page</h1>
-      {/* 오른쪽에 태마 토글, 프로필 등 추가 */}
+      {/* 중앙: 제목 */}
+      <h1 className="text-lg font-semibold text-gray-900">CHAT-4o</h1>
+
+      {/* 오른쪽: 새로고침 버튼 */}
+      <div className="flex items-center">
+        <button className="rounded-lg p-2 hover:bg-gray-100">
+          <FiRefreshCw className="h-5 w-5 text-gray-700" />
+        </button>
+      </div>
     </header>
   );
 }
