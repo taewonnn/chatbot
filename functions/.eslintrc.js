@@ -20,10 +20,13 @@ module.exports = {
   ignorePatterns: [
     '/lib/**/*', // Ignore built files.
     '/generated/**/*', // Ignore generated files.
+    '.eslintrc.js', //
   ],
   plugins: ['@typescript-eslint', 'import'],
   rules: {
-    quotes: ['error', 'double'],
+    quotes: 'off', // 따옴표 규칙 비활성화
+    'object-curly-spacing': 'off', // 공백 규칙 비활성화
+    'arrow-parens': 'off', // 화살표 함수 괄호 규칙 비활성화
     'import/no-unresolved': 0,
     indent: ['error', 2],
   },
