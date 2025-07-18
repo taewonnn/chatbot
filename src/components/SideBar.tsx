@@ -83,8 +83,7 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-blue-500"></div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-white">taewon Park</span>
-                  <span className="text-xs text-gray-400">Rainbow8</span>
+                  <span className="text-sm font-medium text-white">{'유저이름'}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1">
