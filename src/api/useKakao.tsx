@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 import axios from 'axios';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 /** authCode로 토큰 받기 */
 const getKakaoToken = async (authCode: string) => {
@@ -21,12 +22,10 @@ export const useGetKakaoToken = () => {
 
 /** 토큰으로 닉네임 받기 */
 const getKakaoProfile = async (token: string) => {
-  const res = await axios.get('https://kapi.kakao.com/user/me', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const functions = getFunctions();
+  const getKakaoProfileFunction = httpsCallable(functions, 'getKakaoProfile');
 
+  const res = await getKakaoProfileFunction({ token });
   return res?.data;
 };
 
