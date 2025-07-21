@@ -20,3 +20,6 @@ ui-debug.log
 functions/node_modules/
 functions/lib/
 functions/.env
+
+# Service account key
+serviceAccountKey.json
