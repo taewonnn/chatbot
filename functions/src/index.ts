@@ -3,15 +3,36 @@
 import {onCall} from "firebase-functions/v2/https";
 import axios from "axios";
 
+/** 테스트 함수 */
+export const test = onCall(async (request) => {
+  try {
+    return {
+      message: "테스트 함수 실행",
+    };
+  } catch (error) {
+    console.error("테스트 함수 에러:", error);
+    throw new Error("테스트 함수 실패");
+  }
+});
+
 /** 카카오 프로필 받기 */
 export const getKakaoProfile = onCall(async (request) => {
-  const {token} = request.data;
+  try {
+    const {token} = request.data;
 
-  const response = await axios.get("https://kapi.kakao.com/user/me", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+    if (!token) {
+      throw new Error("토큰이 없습니다.");
+    }
 
-  return response.data;
+    const response = await axios.get("https://kapi.kakao.com/user/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("카카오 프로필 요청 에러:", error);
+    throw new Error("카카오 프로필 요청 실패");
+  }
 });
