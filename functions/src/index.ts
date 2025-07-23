@@ -24,7 +24,7 @@ export const getKakaoProfile = onCall(async (request) => {
       throw new Error("토큰이 없습니다.");
     }
 
-    const response = await axios.get("https://kapi.kakao.com/user/me", {
+    const response = await axios.get("https://kapi.kakao.com/v2/user/me", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
