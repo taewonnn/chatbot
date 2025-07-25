@@ -19,7 +19,7 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
 
   /** 채팅 목록 */
   const { chatList } = useGetList(userProfile?.uid || '');
-  console.log('chatList', chatList);
+  // console.log('chatList', chatList);
 
   /** 로그아웃 */
   const handleLogout = async () => {
