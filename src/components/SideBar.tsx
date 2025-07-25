@@ -63,7 +63,7 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
               <div className="space-y-1">
                 {chatList.length > 0 ? (
                   chatList.map((chat, index) => (
-                    <Link to={`/chat/${chat.id}`}>
+                    <Link to={`/chat/${chat.id}`} key={index}>
                       <div
                         key={index}
                         className="w-full rounded-lg px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-800"
