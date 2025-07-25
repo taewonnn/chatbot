@@ -1,4 +1,5 @@
 import { FiMenu, FiRefreshCw } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 interface IGlobalHeader {
   onToggle: () => void;
@@ -15,7 +16,9 @@ export default function GlobalHeader({ onToggle }: IGlobalHeader) {
       </div>
 
       {/* 중앙: 제목 */}
-      <h1 className="text-lg font-semibold text-gray-900">CHAT-4o</h1>
+      <Link to="/">
+        <h1 className="text-lg font-semibold text-gray-900">CHAT-4o</h1>
+      </Link>
 
       {/* 오른쪽: 새로고침 버튼 */}
       <div className="flex items-center">
