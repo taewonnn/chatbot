@@ -2,6 +2,7 @@ import { TbLayoutSidebarRightCollapseFilled } from 'react-icons/tb';
 import { FiPlus, FiSearch } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import { useUserStore } from '../store/userStore';
 
 interface ISideBar {
   isOpen: boolean;
@@ -25,6 +26,9 @@ const recentChats = [
 export default function SideBar({ isOpen, onToggle }: ISideBar) {
   const navigate = useNavigate();
   const { logout } = useAuth();
+
+  const { userProfile } = useUserStore();
+  console.log('userProfile', userProfile);
 
   const handleLogout = async () => {
     try {
@@ -83,7 +87,9 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-blue-500"></div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-white">{'유저이름'}</span>
+                  <span className="text-sm font-medium text-white">
+                    {userProfile?.name || '사용자'}
+                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-1">
