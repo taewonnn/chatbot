@@ -95,3 +95,15 @@ export const useGetChatDetail = (id: string) => {
 
   return { messages, loading };
 };
+
+export const useChatMessage = () => {
+  const sendMessage = async (content: string) => {
+    // @todo
+    // 1. Ui에 질문 내용 표시
+    // 2. Firestore에 질문 저장
+    // 3. AI에 질문 POST
+    // 4. AI 답변 Firestore에 저장
+  };
+
+  return { sendMessage };
+};

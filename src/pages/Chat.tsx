@@ -1,9 +1,24 @@
 import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useGetChatDetail } from '../hooks/useChatData';
+import { useState } from 'react';
 
 export default function Chat() {
   const { id } = useParams(); // URL에서 채팅 ID 가져오기
+
+  /** 질문 입력 내용 저장*/
+  const [question, setQuestion] = useState('');
+
+  // 질문 버튼 클릭 시
+  const handleSend = () => {
+    if (question.trim() === '') {
+      alert('질문을 입력해주세요.');
+      return;
+    }
+
+    setQuestion('');
+    // @todo AI에 질문 API + firestore에 저장 로직(커스텀훅)
+  };
 
   // id가 있을 때만 메시지 표시
   const isExistingChat = !!id;
@@ -50,9 +65,14 @@ export default function Chat() {
             className="flex-1 resize-none border-none bg-transparent p-2 outline-none"
             rows={1}
             style={{ minHeight: '20px', maxHeight: '120px' }}
+            value={question}
+            onChange={e => setQuestion(e.target.value)}
           />
           <div className="flex items-center gap-1">
-            <button className="rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600">
+            <button
+              className="rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600"
+              onClick={handleSend}
+            >
               <FiSend className="h-4 w-4" />
             </button>
           </div>
