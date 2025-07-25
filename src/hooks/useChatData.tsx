@@ -79,7 +79,7 @@ export const useGetChatDetail = (id: string) => {
             id: doc.id,
             ...doc.data(),
           }));
-          console.log('메시지 목록:', messageList);
+          // console.log('메시지 목록:', messageList);
           setMessages(messageList);
         }
       } catch (e) {

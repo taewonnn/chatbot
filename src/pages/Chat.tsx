@@ -19,11 +19,17 @@ export default function Chat() {
         {isExistingChat ? (
           // 기존 채팅 메시지들 표시
           <div>
-            {messages.map(message => (
-              <div key={message.id}>
-                <strong>{message.role}:</strong> {message.content}
-              </div>
-            ))}
+            {messages.map(message =>
+              message.role === 'assistant' ? (
+                <div key={message.id} className="">
+                  <strong>{message.role}:</strong> {message.content}
+                </div>
+              ) : (
+                <div key={message.id} className="rounded-lg bg-gray-100 p-2">
+                  <strong>{message.role}:</strong> {message.content}
+                </div>
+              ),
+            )}
           </div>
         ) : (
           // 새 채팅 안내 메시지
