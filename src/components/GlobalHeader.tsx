@@ -22,7 +22,10 @@ export default function GlobalHeader({ onToggle }: IGlobalHeader) {
 
       {/* 오른쪽: 새로고침 버튼 */}
       <div className="flex items-center">
-        <button className="rounded-lg p-2 hover:bg-gray-100">
+        <button
+          className="rounded-lg p-2 hover:bg-gray-100"
+          onClick={() => window.location.reload()}
+        >
           <FiRefreshCw className="h-5 w-5 text-gray-700" />
         </button>
       </div>
