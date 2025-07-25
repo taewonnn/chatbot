@@ -1,34 +1,27 @@
 import { TbLayoutSidebarRightCollapseFilled } from 'react-icons/tb';
 import { FiPlus, FiSearch } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useUserStore } from '../store/userStore';
+import { useGetList } from '../hooks/useChat';
 
 interface ISideBar {
   isOpen: boolean;
   onToggle: () => void;
 }
 
-const recentChats = [
-  '국채금리 상승 원인',
-  'Rimraf glob 타입 에러',
-  '모바일 애니메이션 텍스트 수정',
-  '단기채 발행과 주식 결정',
-  '스크립트 로딩 최적화',
-  'Truth Social 확인',
-  '프로젝트 섹션 스크롤',
-  'Gitlab HTTPS 오류 해결',
-  'Elixir Redis 연결 리팩토링',
-  '로고 선 문제',
-  '접근 차단 원인 분석',
-];
-
 export default function SideBar({ isOpen, onToggle }: ISideBar) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
+  /** 프로필 정보 */
   const { userProfile } = useUserStore();
 
+  /** 채팅 목록 */
+  const { chatList } = useGetList(userProfile?.uid || '');
+  console.log('chatList', chatList);
+
+  /** 로그아웃 */
   const handleLogout = async () => {
     try {
       await logout();
@@ -68,14 +61,20 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
             <div className="mt-6">
               <h3 className="mb-2 px-3 text-xs font-semibold uppercase text-gray-400">채팅</h3>
               <div className="space-y-1">
-                {recentChats.map((chat, index) => (
-                  <button
-                    key={index}
-                    className="w-full rounded-lg px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-800"
-                  >
-                    {chat}
-                  </button>
-                ))}
+                {chatList.length > 0 ? (
+                  chatList.map((chat, index) => (
+                    <Link to={`/chat/${chat.id}`}>
+                      <div
+                        key={index}
+                        className="w-full rounded-lg px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-800"
+                      >
+                        {chat.title}
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p className="mt-3 text-center text-white">새로운 채팅을 시작해보세요.</p>
+                )}
               </div>
             </div>
           </div>
