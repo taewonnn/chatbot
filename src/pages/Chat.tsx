@@ -1,16 +1,39 @@
 import { FiSend } from 'react-icons/fi';
+import { useParams } from 'react-router-dom';
+import { useGetChatDetail } from '../hooks/useChat';
 
 export default function Chat() {
+  const { id } = useParams(); // URL에서 채팅 ID 가져오기
+
+  // id가 있을 때만 메시지 표시
+  const isExistingChat = !!id;
+
+  // 채팅 상세 페이지에서만 동작해야함
+  const { messages } = useGetChatDetail(id || '');
+  console.log('messages', messages);
+
   return (
     <div className="flex h-full flex-col">
       {/* 채팅 영역 */}
       <div className="flex-1 overflow-y-auto bg-white">
-        <div className="flex h-full items-center justify-center">
-          <div className="text-center">
-            <h2 className="mb-4 text-2xl font-semibold text-gray-700">무엇을 도와드릴까요?</h2>
-            <p className="text-gray-500">질문이나 도움이 필요한 내용을 입력해주세요.</p>
+        {isExistingChat ? (
+          // 기존 채팅 메시지들 표시
+          <div>
+            {messages.map(message => (
+              <div key={message.id}>
+                <strong>{message.role}:</strong> {message.content}
+              </div>
+            ))}
           </div>
-        </div>
+        ) : (
+          // 새 채팅 안내 메시지
+          <div className="flex h-full items-center justify-center">
+            <div className="text-center">
+              <h2 className="mb-4 text-2xl font-semibold text-gray-700">무엇을 도와드릴까요?</h2>
+              <p className="text-gray-500">질문이나 도움이 필요한 내용을 입력해주세요.</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 입력 영역 */}
