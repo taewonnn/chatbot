@@ -17,7 +17,7 @@ export default function GlobalHeader({ onToggle }: IGlobalHeader) {
 
       {/* 중앙: 제목 */}
       <Link to="/">
-        <h1 className="text-lg font-semibold text-gray-900">CHAT-4o</h1>
+        <h1 className="text-lg font-semibold text-gray-900">CHAT-gpt-3.5-turbo</h1>
       </Link>
 
       {/* 오른쪽: 새로고침 버튼 */}
