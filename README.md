@@ -39,30 +39,16 @@ OpenAI GPT API를 활용하여 사용자와의 대화형 인터페이스를 제�
 
 ## 📦 설치 및 실행
 
-### 1. 저장소 클론
-
-```bash
-git clone [repository-url]
-cd chatbot
-```
-
-### 2. 의존성 설치
+### 1. 의존성 설치
 
 ```bash
 npm install
 ```
 
-### 3. 개발 서버 실행
+### 2. 개발 서버 실행
 
 ```bash
 npm run dev
-```
-
-### 4. 프로덕션 빌드
-
-```bash
-npm run build
-npm run preview
 ```
 
 ## 🏗️ 프로젝트 구조
@@ -124,4 +110,4 @@ src/
 
 ## 🚀 배포
 
-**개발 중인 프로젝트입니다.** 일부 기능이 아직 구현 중이거나 변경될 수 있습니다.
+**개발 중인 프로젝트입니다.**
