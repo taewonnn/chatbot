@@ -1,6 +1,6 @@
 import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
-import { useGetChatDetail } from '../hooks/useChatData';
+import { useChatMessage, useGetChatDetail } from '../hooks/useChatData';
 import { useState } from 'react';
 
 export default function Chat() {
@@ -9,6 +9,9 @@ export default function Chat() {
   /** 질문 입력 내용 저장*/
   const [question, setQuestion] = useState('');
   const [newMessages, setNewMessages] = useState<any[]>([]); // 새로 추가된 메시지
+
+  //
+  const { sendMessage } = useChatMessage(id || '');
 
   // 질문 버튼 클릭 시
   const handleSend = () => {
@@ -27,8 +30,8 @@ export default function Chat() {
 
     setNewMessages(prev => [...prev, userMessage]);
 
-    // 2. 훅 호출 (나중에 구현)
-    // sendMessage(question);
+    // 2. 훅 호출
+    sendMessage(question);
 
     // 3. 입력창 클리어
     setQuestion('');
@@ -39,7 +42,7 @@ export default function Chat() {
 
   // 채팅 상세 페이지에서만 동작해야함
   const { messages } = useGetChatDetail(id || '');
-  console.log('messages', messages);
+  // console.log('messages', messages);
 
   return (
     <div className="flex h-full flex-col">
@@ -59,7 +62,7 @@ export default function Chat() {
                   <span className="text-xs text-gray-500">{messageTime.toLocaleString()}</span>
                 </div>
               ) : (
-                <div key={message.id} className="rounded-lg bg-gray-100 p-2">
+                <div key={message.id} className="rounded-xl border border-gray-200 bg-gray-100 p-2">
                   <strong>{message.role}:</strong> {message.content}
                   <span className="text-xs text-gray-500">{messageTime.toLocaleString()}</span>
                 </div>

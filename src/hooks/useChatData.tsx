@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  serverTimestamp,
+  addDoc,
+} from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 
 /**
@@ -96,11 +104,21 @@ export const useGetChatDetail = (id: string) => {
   return { messages, loading };
 };
 
-export const useChatMessage = () => {
+export const useChatMessage = (id: string) => {
   const sendMessage = async (content: string) => {
-    // @todo
-    // 1. Ui에 질문 내용 표시
     // 2. Firestore에 질문 저장
+    const newMessage = {
+      role: 'user',
+      content,
+      timestamp: serverTimestamp(),
+    };
+
+    try {
+      const newMessageRef = await addDoc(collection(db, 'chats', id, 'message'), newMessage);
+      console.log('newMessageRef', newMessageRef);
+    } catch (e) {
+      console.error('메시지 저장 실패:', e);
+    }
     // 3. AI에 질문 POST
     // 4. AI 답변 Firestore에 저장
   };
