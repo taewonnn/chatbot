@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 interface IAuthGuard {
   mode: 'auth' | 'guest';
@@ -9,7 +10,13 @@ interface IAuthGuard {
 function AuthGuard({ mode, children }: IAuthGuard) {
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <LoadingSpinner size="xl" color="blue" centered={true} text="로딩 중..." />
+      </div>
+    );
+  }
 
   // 로그인 필요 페이지 -> 로그인 안 돼 있으면 → /signin
   if (mode === 'auth' && !user) {

@@ -64,7 +64,7 @@ export default function SideBar({ isOpen }: ISideBar) {
           <div className="px-4 pb-4">
             <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-gray-800">
               <FiSearch className="h-4 w-4" />
-              🔍 채팅 검색
+              채팅 검색
             </button>
           </div>
 
