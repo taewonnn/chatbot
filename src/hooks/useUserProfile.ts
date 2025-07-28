@@ -3,7 +3,7 @@ import { db } from '../firebase/firebase';
 import { UserProfile as CustomUserProfile } from '../store/userStore';
 
 export const getUSerProfile = async (uid: string) => {
-  console.log('uid', uid);
+  // console.log('uid', uid);
   try {
     const userDoc = doc(db, 'users', uid);
     const snapshot = await getDoc(userDoc);
