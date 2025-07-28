@@ -1,4 +1,3 @@
-import { TbLayoutSidebarRightCollapseFilled } from 'react-icons/tb';
 import { FiPlus, FiSearch } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
@@ -7,10 +6,9 @@ import { useGetList } from '../hooks/useChatData';
 
 interface ISideBar {
   isOpen: boolean;
-  onToggle: () => void;
 }
 
-export default function SideBar({ isOpen, onToggle }: ISideBar) {
+export default function SideBar({ isOpen }: ISideBar) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -102,16 +100,6 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
             </div>
           </div>
         </div>
-      )}
-
-      {/* 사이드바 닫기 버튼 */}
-      {isOpen && (
-        <button
-          onClick={onToggle}
-          className="absolute right-2 top-4 rounded-lg bg-gray-800 p-2 text-white hover:bg-gray-700"
-        >
-          <TbLayoutSidebarRightCollapseFilled className="h-4 w-4" />
-        </button>
       )}
     </aside>
   );
