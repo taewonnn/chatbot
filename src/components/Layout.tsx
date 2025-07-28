@@ -11,7 +11,7 @@ export default function Layout() {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* 사이드바 */}
-      <SideBar isOpen={isOpen} onToggle={toggleSidebar} />
+      <SideBar isOpen={isOpen} />
 
       {/* 메인 컨텐츠 */}
       <div className="flex flex-1 flex-col">
