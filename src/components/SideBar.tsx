@@ -19,7 +19,7 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
 
   /** 채팅 목록 */
   const { chatList } = useGetList(userProfile?.uid || '');
-  // console.log('chatList', chatList);
+  console.log('chatList', chatList);
 
   /** 로그아웃 */
   const handleLogout = async () => {
@@ -42,9 +42,12 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
         <div className="flex h-full flex-col">
           {/* 새 채팅 버튼 */}
           <div className="p-4">
-            <button className="flex w-full items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white hover:bg-gray-700">
+            <Link
+              to="/"
+              className="flex w-full items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white hover:bg-gray-700"
+            >
               <FiPlus className="h-4 w-4" />새 채팅
-            </button>
+            </Link>
           </div>
 
           {/* 검색 */}

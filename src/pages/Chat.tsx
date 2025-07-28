@@ -102,9 +102,7 @@ export default function Chat() {
                       message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
                     }`}
                   >
-                    {message.timestamp?.toDate
-                      ? message.timestamp.toDate().toLocaleString()
-                      : message.timestamp.toLocaleString()}
+                    {message.timestamp?.toDate?.()?.toLocaleString() || '방금 전'}
                   </div>
                 </div>
                 {/* 스크롤 타겟 */}

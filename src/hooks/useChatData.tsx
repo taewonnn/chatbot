@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   collection,
   getDocs,
@@ -10,6 +10,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { VITE_OPENAI_API_KEY } from '../config/config';
+import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../store/userStore';
 
 /**
  * 채팅 목록 가져오기
@@ -20,42 +22,40 @@ export const useGetList = (uid: string) => {
   const [chatList, setChatList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      if (!uid) {
+  const fetchChats = useCallback(async () => {
+    if (!uid) {
+      setChatList([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const q = query(collection(db, 'chats'), where('uid', '==', uid));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        console.log('채팅 목록 없음');
         setChatList([]);
-        setLoading(false);
-        return;
+      } else {
+        const chats = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setChatList(chats);
       }
-
-      try {
-        const q = query(collection(db, 'chats'), where('uid', '==', uid));
-        const snapshot = await getDocs(q);
-
-        if (snapshot.empty) {
-          console.log('채팅 목록 없음');
-          setChatList([]);
-        } else {
-          const chats = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          // console.log('chatList', chats);
-
-          setChatList(chats);
-        }
-      } catch (error) {
-        console.error('채팅 목록 조회 실패:', error);
-        setChatList([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChats();
+    } catch (error) {
+      console.error('채팅 목록 조회 실패:', error);
+      setChatList([]);
+    } finally {
+      setLoading(false);
+    }
   }, [uid]);
 
-  return { chatList, loading };
+  useEffect(() => {
+    fetchChats();
+  }, [fetchChats]);
+
+  return { chatList, loading, refetch: fetchChats }; // refetch 함수 반환
 };
 
 /**
@@ -111,7 +111,27 @@ export const useGetChatDetail = (id: string) => {
  * @returns 메시지 저장 함수
  */
 export const useChatMessage = (id: string) => {
+  const navigate = useNavigate();
+
+  const { userProfile } = useUserStore();
+
   const sendMessage = async (content: string) => {
+    // 1. 채팅 세션이 없으면 새로 생성
+    let chatId = id; // url의 id
+
+    if (!chatId) {
+      console.log('chatId 없음');
+      const newChatRef = await addDoc(collection(db, 'chats'), {
+        title: content.substring(0, 30) + '...',
+        uid: userProfile?.uid,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      chatId = newChatRef.id;
+
+      navigate(`chat/${chatId}`);
+    }
+
     // 2. Firestore에 질문 저장
     const newMessage = {
       role: 'user',
@@ -120,7 +140,7 @@ export const useChatMessage = (id: string) => {
     };
 
     try {
-      const newMessageRef = await addDoc(collection(db, 'chats', id, 'message'), newMessage);
+      const newMessageRef = await addDoc(collection(db, 'chats', chatId, 'message'), newMessage);
       console.log('newMessageRef', newMessageRef);
     } catch (e) {
       console.error('메시지 저장 실패:', e);
@@ -151,7 +171,10 @@ export const useChatMessage = (id: string) => {
 
     // 4. AI 답변 Firestore에 저장
     try {
-      const newAiMessageRef = await addDoc(collection(db, 'chats', id, 'message'), newAiMessage);
+      const newAiMessageRef = await addDoc(
+        collection(db, 'chats', chatId, 'message'),
+        newAiMessage,
+      );
       console.log('newAiMessageRef', newAiMessageRef);
     } catch (e) {
       console.log('AI 답변 저장 실패:', e);
