@@ -1,7 +1,7 @@
 import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useChatMessage, useGetChatDetail } from '../hooks/useChatData';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import MarkdownRenderer from '../components/ReactMarkdownRenderer';
 import useAutoScroll from '../hooks/useAutoScroll';
 

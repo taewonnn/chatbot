@@ -30,6 +30,7 @@ export const useGetList = (uid: string) => {
     }
 
     try {
+      // orderBy 제거하고 클라이언트에서 정렬
       const q = query(collection(db, 'chats'), where('uid', '==', uid));
       const snapshot = await getDocs(q);
 
@@ -41,6 +42,15 @@ export const useGetList = (uid: string) => {
           id: doc.id,
           ...doc.data(),
         }));
+
+        // 클라이언트에서 Timestamp 정렬
+        chats.sort((a, b) => {
+          const aTime = (a as any).createdAt?.toDate?.() || new Date(0);
+          const bTime = (b as any).createdAt?.toDate?.() || new Date(0);
+          return bTime.getTime() - aTime.getTime(); // 최신순
+        });
+
+        console.log('정렬된 chatList:', chats);
         setChatList(chats);
       }
     } catch (error) {
@@ -124,8 +134,8 @@ export const useChatMessage = (id: string) => {
       const newChatRef = await addDoc(collection(db, 'chats'), {
         title: content.substring(0, 30) + '...',
         uid: userProfile?.uid,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
       chatId = newChatRef.id;
 
