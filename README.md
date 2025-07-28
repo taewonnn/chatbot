@@ -1,16 +1,17 @@
 # AI 챗봇 웹 애플리케이션
 
-OpenAI GPT API를 활용하여 사용자와의 대화형 인터페이스를 제공합니다.
+React + TypeScript + Vite + Firebase Cloud Functions로 구축된 AI 챗봇 웹 애플리케이션입니다. OpenAI GPT API를 활용하여 사용자와의 대화형 인터페이스를 제공합니다.
 
 ## 🚀 주요 기능
 
 - **AI 챗봇**: OpenAI GPT-3.5-turbo 모델을 활용한 자연어 대화
 - **사용자 인증**: Firebase Authentication을 통한 로그인/회원가입
-- **카카오 로그인**: 카카오 소셜 로그인 지원
+- **카카오 로그인**: 카카오 소셜 로그인 지원 (Cloud Functions 활용)
 - **채팅 히스토리**: Firestore를 통한 대화 기록 저장 및 관리
 - **실시간 채팅**: 실시간 메시지 전송 및 응답
 - **반응형 디자인**: 모바일과 데스크톱 환경 모두 지원
 - **다크/라이트 모드**: 테마 전환 기능
+- **서버리스 백엔드**: Firebase Cloud Functions를 통한 안전한 API 처리
 
 ## 🛠️ 기술 스택
 
@@ -28,6 +29,7 @@ OpenAI GPT API를 활용하여 사용자와의 대화형 인터페이스를 제�
 
 - **Firebase Authentication** - 사용자 인증
 - **Firestore** - 실시간 데이터베이스
+- **Firebase Cloud Functions** - 서버리스 백엔드 API
 - **OpenAI API** - AI 챗봇 기능
 - **Kakao API** - 소셜 로그인
 
@@ -39,33 +41,33 @@ OpenAI GPT API를 활용하여 사용자와의 대화형 인터페이스를 제�
 
 ## 📦 설치 및 실행
 
-### 1. 의존성 설치
+### 요구사항
 
-```bash
-npm install
-```
-
-### 2. 개발 서버 실행
-
-```bash
-npm run dev
-```
+- **Node.js**: 18.x 이상
 
 ## 🏗️ 프로젝트 구조
 
 ```
-src/
-├── api/                 # API 관련 훅 및 함수
-├── components/          # 재사용 가능한 컴포넌트
-├── config/             # 설정 파일
-├── firebase/           # Firebase 설정
-├── guards/             # 인증 가드 컴포넌트
-├── hooks/              # 커스텀 훅
-├── pages/              # 페이지 컴포넌트
-├── router/             # 라우팅 설정
-├── store/              # Zustand 스토어
-├── types/              # TypeScript 타입 정의
-└── utils/              # 유틸리티 함수
+chatbot/
+├── src/                    # 프론트엔드 소스 코드
+│   ├── api/               # API 관련 훅 및 함수
+│   ├── components/        # 재사용 가능한 컴포넌트
+│   ├── config/           # 설정 파일
+│   ├── firebase/         # Firebase 설정
+│   ├── guards/           # 인증 가드 컴포넌트
+│   ├── hooks/            # 커스텀 훅
+│   ├── pages/            # 페이지 컴포넌트
+│   ├── router/           # 라우팅 설정
+│   ├── store/            # Zustand 스토어
+│   ├── types/            # TypeScript 타입 정의
+│   └── utils/            # 유틸리티 함수
+├── functions/             # Firebase Cloud Functions
+│   ├── src/              # TypeScript 소스 코드
+│   │   └── index.ts      # Cloud Functions 엔트리 포인트
+│   ├── lib/              # 컴파일된 JavaScript
+│   └── package.json      # Functions 의존성
+├── firebase.json         # Firebase 프로젝트 설정
+└── package.json          # 프론트엔드 의존성
 ```
 
 ## 🔧 주요 컴포넌트
@@ -88,10 +90,16 @@ src/
 - `SideBar`: 사이드바 네비게이션
 - `GlobalHeader`: 전역 헤더
 
+### Cloud Functions
+
+- `createCustomToken`: SNS 사용자용 커스텀 토큰 발급
+- `getKakaoProfile`: 카카오 프로필 정보 조회
+- `test`: 테스트 함수
+
 ## 🔐 인증 플로우
 
 1. **일반 회원가입/로그인**: Firebase Authentication 사용
-2. **카카오 로그인**: OAuth 2.0 플로우를 통한 소셜 로그인
+2. **카카오 로그인**: OAuth 2.0 플로우 + Cloud Functions를 통한 안전한 토큰 처리
 3. **인증 상태 관리**: Zustand 스토어를 통한 전역 상태 관리
 
 ## 💬 채팅 기능
