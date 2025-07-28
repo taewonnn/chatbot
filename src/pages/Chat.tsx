@@ -70,51 +70,70 @@ export default function Chat() {
   return (
     <div className="flex h-full flex-col">
       {/* 채팅 영역 */}
-      <div className="flex-1 overflow-y-auto bg-white">
+      <div className="flex-1 overflow-y-auto bg-gray-50">
         {isExistingChat ? (
-          // 기존 채팅 메시지들 + 새로 추가된 메시지들
-          <div>
-            {[...messages, ...newMessages].map(message => {
-              const messageTime = message?.timestamp?.toDate
-                ? message.timestamp.toDate()
-                : new Date();
-
-              return message.role == 'assistant' ? (
-                <div key={message.id} className="">
-                  <strong>{message.role}:</strong> {message.content}
-                  <span className="text-xs text-gray-500">{messageTime.toLocaleString()}</span>
+          <div className="space-y-6 p-4">
+            {[...messages, ...newMessages].map(message => (
+              <div
+                key={message.id}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                    message.role === 'user'
+                      ? 'bg-blue-500 text-white'
+                      : 'border border-gray-200 bg-white text-gray-800 shadow-sm'
+                  }`}
+                >
+                  <div className="text-sm leading-relaxed">{message.content}</div>
+                  <div
+                    className={`mt-2 text-xs ${
+                      message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                    }`}
+                  >
+                    {message.timestamp?.toDate
+                      ? message.timestamp.toDate().toLocaleString()
+                      : message.timestamp.toLocaleString()}
+                  </div>
                 </div>
-              ) : (
-                <div key={message.id} className="rounded-xl border border-gray-200 bg-gray-100 p-2">
-                  <strong>{message.role}:</strong> {message.content}
-                  <span className="text-xs text-gray-500">{messageTime.toLocaleString()}</span>
-                </div>
-              );
-            })}
+              </div>
+            ))}
 
-            {/* 로딩 표시 - 여기에 추가 */}
+            {/* 로딩 표시 */}
             {isLoading && (
-              <div className="flex items-center gap-2 p-4 text-gray-500">
-                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-blue-500"></div>
-                <span>AI가 답변을 생성하고 있습니다 잠시만 기다려주세요!</span>
+              <div className="flex justify-start">
+                <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500"></div>
+                    <span className="text-sm">AI가 답변을 생성하고 있습니다...</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>
         ) : (
-          // 새 채팅일 때는 새로 입력한 메시지만 표시
-          <div>
+          // 새 채팅일 때
+          <div className="space-y-6 p-4">
             {newMessages.map(message => (
-              <div key={message.id} className="rounded-lg bg-gray-100 p-2">
-                <strong>{message.role}:</strong> {message.content}
-                <span className="text-xs text-gray-500">{message.timestamp.toLocaleString()}</span>
+              <div key={message.id} className="flex justify-end">
+                <div className="max-w-[80%] rounded-2xl bg-blue-500 px-4 py-3 text-white">
+                  <div className="text-sm leading-relaxed">{message.content}</div>
+                  <div className="mt-2 text-xs text-blue-100">
+                    {message.timestamp.toLocaleString()}
+                  </div>
+                </div>
               </div>
             ))}
 
-            {/* 로딩 표시 - 여기에도 추가 */}
+            {/* AI 답변 - 로딩 중 */}
             {isLoading && (
-              <div className="flex items-center gap-2 p-4 text-gray-500">
-                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-blue-500"></div>
-                <span>AI가 답변을 생성하고 있습니다...</span>
+              <div className="flex justify-start">
+                <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500"></div>
+                    <span className="text-sm">AI가 답변을 생성하고 있습니다...</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -123,28 +142,37 @@ export default function Chat() {
 
       {/* 입력 영역 */}
       <div className="border-t border-gray-200 bg-white p-4">
-        <div className="flex items-end gap-2 rounded-lg border border-gray-300 bg-white p-2 focus-within:border-blue-500">
-          <textarea
-            placeholder="무엇이든 물어보세요"
-            className="flex-1 resize-none border-none bg-transparent p-2 outline-none"
-            rows={1}
-            style={{ minHeight: '20px', maxHeight: '120px' }}
-            value={question}
-            onChange={e => setQuestion(e.target.value)}
-            disabled={isLoading}
-          />
-          <div className="flex items-center gap-1">
+        <div className="mx-auto max-w-4xl">
+          <div className="flex items-end gap-3 rounded-2xl border border-gray-300 bg-white p-3 transition-all focus-within:border-blue-500 focus-within:shadow-lg">
+            <textarea
+              placeholder="메시지를 입력하세요..."
+              className="flex-1 resize-none border-none bg-transparent p-2 text-sm leading-relaxed outline-none"
+              rows={1}
+              style={{ minHeight: '24px', maxHeight: '120px' }}
+              value={question}
+              onChange={e => setQuestion(e.target.value)}
+              disabled={isLoading}
+            />
             <button
-              className="rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600"
+              className={`rounded-xl p-2 transition-colors ${
+                isLoading
+                  ? 'cursor-not-allowed bg-gray-300'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
               onClick={handleSend}
+              disabled={isLoading}
             >
-              <FiSend className="h-4 w-4" />
+              {isLoading ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+              ) : (
+                <FiSend className="h-4 w-4" />
+              )}
             </button>
           </div>
+          <p className="mt-2 text-center text-xs text-gray-500">
+            AI는 실수를 할 수 있습니다. 중요한 정보는 확인해주세요.
+          </p>
         </div>
-        <p className="mt-2 text-xs text-gray-500">
-          실수를 할 수 있습니다. 중요한 정보는 확인해주세요.
-        </p>
       </div>
     </div>
   );
