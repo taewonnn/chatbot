@@ -16,10 +16,6 @@ export default function Chat() {
 
   // 질문 버튼 클릭 시
   const handleSend = async () => {
-    console.log('=== handleSend 시작 ===');
-    console.log('현재 messages:', messages);
-    console.log('현재 newMessages:', newMessages);
-
     if (question.trim() === '') {
       alert('질문을 입력해주세요.');
       return;
@@ -35,10 +31,11 @@ export default function Chat() {
 
     // 입력창 클리어
     setQuestion('');
+
+    // 새로운 메시지 추가
     setNewMessages(prev => {
-      console.log('setNewMessages 실행, prev:', prev);
       const updated = [...prev, userMessage];
-      console.log('업데이트된 newMessages:', updated);
+
       return updated;
     });
 
@@ -134,6 +131,7 @@ export default function Chat() {
             style={{ minHeight: '20px', maxHeight: '120px' }}
             value={question}
             onChange={e => setQuestion(e.target.value)}
+            disabled={isLoading}
           />
           <div className="flex items-center gap-1">
             <button
