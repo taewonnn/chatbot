@@ -16,7 +16,6 @@ export default function Chat() {
   // 채팅 상세 페이지에서만 동작해야함
   const { messages } = useGetChatDetail(id || '');
 
-  // 메시지 전송 훅
   const { sendMessage } = useChatMessage(id || '');
 
   // 스크롤 훅

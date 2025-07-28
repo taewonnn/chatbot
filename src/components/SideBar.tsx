@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useUserStore } from '../store/userStore';
 import { useGetList } from '../hooks/useChatData';
+import { useEffect } from 'react';
 
 interface ISideBar {
   isOpen: boolean;
@@ -16,8 +17,19 @@ export default function SideBar({ isOpen }: ISideBar) {
   const { userProfile } = useUserStore();
 
   /** 채팅 목록 */
-  const { chatList } = useGetList(userProfile?.uid || '');
+  const { chatList, refetch } = useGetList(userProfile?.uid || '');
   console.log('chatList', chatList);
+
+  /** 새 채팅 생성 시 목록 새로고침 */
+  useEffect(() => {
+    const handleChatCreated = () => {
+      console.log('새 채팅 생성됨 - 목록 새로고침');
+      refetch();
+    };
+
+    window.addEventListener('chatCreated', handleChatCreated);
+    return () => window.removeEventListener('chatCreated', handleChatCreated);
+  }, [refetch]);
 
   /** 로그아웃 */
   const handleLogout = async () => {

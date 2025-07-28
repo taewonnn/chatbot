@@ -133,6 +133,8 @@ export const useChatMessage = (id: string) => {
       });
       chatId = newChatRef.id;
 
+      // 이벤트 발생(커스텀)
+      window.dispatchEvent(new CustomEvent('chatCreated'));
       navigate(`chat/${chatId}`);
     }
 
