@@ -9,6 +9,7 @@ import {
   addDoc,
 } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { VITE_OPENAI_API_KEY } from '../config/config';
 
 /**
  * 채팅 목록 가져오기
@@ -104,6 +105,11 @@ export const useGetChatDetail = (id: string) => {
   return { messages, loading };
 };
 
+/**
+ * 채팅 메시지 저장 + AI 답변 저장
+ * @param id 채팅 ID
+ * @returns 메시지 저장 함수
+ */
 export const useChatMessage = (id: string) => {
   const sendMessage = async (content: string) => {
     // 2. Firestore에 질문 저장
@@ -119,8 +125,44 @@ export const useChatMessage = (id: string) => {
     } catch (e) {
       console.error('메시지 저장 실패:', e);
     }
-    // 3. AI에 질문 POST
+
+    // 3. AI에 질문 POST 요청
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${VITE_OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content }],
+      }),
+    });
+
+    const answer = await response.json();
+    console.log('answer', answer);
+    const aiContent = answer.choices[0].message.content;
+
+    const newAiMessage = {
+      role: 'assistant',
+      content: aiContent,
+      timestamp: serverTimestamp(),
+    };
+
     // 4. AI 답변 Firestore에 저장
+    try {
+      const newAiMessageRef = await addDoc(collection(db, 'chats', id, 'message'), newAiMessage);
+      console.log('newAiMessageRef', newAiMessageRef);
+    } catch (e) {
+      console.log('AI 답변 저장 실패:', e);
+    }
+
+    // 5. AI 답변 전달
+    return {
+      role: 'assistant',
+      content: aiContent,
+      timestamp: new Date(),
+    };
   };
 
   return { sendMessage };

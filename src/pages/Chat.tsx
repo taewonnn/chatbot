@@ -9,18 +9,23 @@ export default function Chat() {
   /** 질문 입력 내용 저장*/
   const [question, setQuestion] = useState('');
   const [newMessages, setNewMessages] = useState<any[]>([]); // 새로 추가된 메시지
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
-  //
+  // 메시지 전송 훅
   const { sendMessage } = useChatMessage(id || '');
 
   // 질문 버튼 클릭 시
-  const handleSend = () => {
+  const handleSend = async () => {
+    console.log('=== handleSend 시작 ===');
+    console.log('현재 messages:', messages);
+    console.log('현재 newMessages:', newMessages);
+
     if (question.trim() === '') {
       alert('질문을 입력해주세요.');
       return;
     }
 
-    // 1. UI에 즉시 표시 (Optimistic Update)
+    // 1. UI에 즉시 표시
     const userMessage = {
       id: Date.now().toString(),
       role: 'user',
@@ -28,13 +33,34 @@ export default function Chat() {
       timestamp: new Date(),
     };
 
-    setNewMessages(prev => [...prev, userMessage]);
-
-    // 2. 훅 호출
-    sendMessage(question);
-
-    // 3. 입력창 클리어
+    // 입력창 클리어
     setQuestion('');
+    setNewMessages(prev => {
+      console.log('setNewMessages 실행, prev:', prev);
+      const updated = [...prev, userMessage];
+      console.log('업데이트된 newMessages:', updated);
+      return updated;
+    });
+
+    // 로딩 시작
+    setIsLoading(true);
+
+    try {
+      const aiMessage = await sendMessage(question);
+
+      // 3. AI 답변도 UI에 표시
+      setNewMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          ...aiMessage,
+        },
+      ]);
+    } catch (e) {
+      console.log('채팅 전송 실패:', e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // id가 있을 때만 메시지 표시
@@ -68,6 +94,14 @@ export default function Chat() {
                 </div>
               );
             })}
+
+            {/* 로딩 표시 - 여기에 추가 */}
+            {isLoading && (
+              <div className="flex items-center gap-2 p-4 text-gray-500">
+                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-blue-500"></div>
+                <span>AI가 답변을 생성하고 있습니다 잠시만 기다려주세요!</span>
+              </div>
+            )}
           </div>
         ) : (
           // 새 채팅일 때는 새로 입력한 메시지만 표시
@@ -78,6 +112,14 @@ export default function Chat() {
                 <span className="text-xs text-gray-500">{message.timestamp.toLocaleString()}</span>
               </div>
             ))}
+
+            {/* 로딩 표시 - 여기에도 추가 */}
+            {isLoading && (
+              <div className="flex items-center gap-2 p-4 text-gray-500">
+                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-blue-500"></div>
+                <span>AI가 답변을 생성하고 있습니다...</span>
+              </div>
+            )}
           </div>
         )}
       </div>
