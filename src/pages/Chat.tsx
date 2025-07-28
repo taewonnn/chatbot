@@ -1,7 +1,9 @@
 import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useChatMessage, useGetChatDetail } from '../hooks/useChatData';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import MarkdownRenderer from '../components/ReactMarkdownRenderer';
+import useAutoScroll from '../hooks/useAutoScroll';
 
 export default function Chat() {
   const { id } = useParams(); // URL에서 채팅 ID 가져오기
@@ -11,8 +13,15 @@ export default function Chat() {
   const [newMessages, setNewMessages] = useState<any[]>([]); // 새로 추가된 메시지
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
+  // 채팅 상세 페이지에서만 동작해야함
+  const { messages } = useGetChatDetail(id || '');
+
   // 메시지 전송 훅
   const { sendMessage } = useChatMessage(id || '');
+
+  // 스크롤 훅
+
+  const { messageEndRef } = useAutoScroll([messages.length, newMessages.length]);
 
   // 질문 버튼 클릭 시
   const handleSend = async () => {
@@ -63,10 +72,6 @@ export default function Chat() {
   // id가 있을 때만 메시지 표시
   const isExistingChat = !!id;
 
-  // 채팅 상세 페이지에서만 동작해야함
-  const { messages } = useGetChatDetail(id || '');
-  // console.log('messages', messages);
-
   return (
     <div className="flex h-full flex-col">
       {/* 채팅 영역 */}
@@ -85,7 +90,13 @@ export default function Chat() {
                       : 'border border-gray-200 bg-white text-gray-800 shadow-sm'
                   }`}
                 >
-                  <div className="text-sm leading-relaxed">{message.content}</div>
+                  <div className="text-sm leading-relaxed">
+                    {message.role === 'assistant' ? (
+                      <MarkdownRenderer content={message.content} />
+                    ) : (
+                      message.content
+                    )}
+                  </div>
                   <div
                     className={`mt-2 text-xs ${
                       message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
@@ -96,6 +107,8 @@ export default function Chat() {
                       : message.timestamp.toLocaleString()}
                   </div>
                 </div>
+                {/* 스크롤 타겟 */}
+                <div ref={messageEndRef} />
               </div>
             ))}
 
@@ -110,6 +123,8 @@ export default function Chat() {
                 </div>
               </div>
             )}
+            {/* 스크롤 타겟 */}
+            <div ref={messageEndRef} />
           </div>
         ) : (
           // 새 채팅일 때
