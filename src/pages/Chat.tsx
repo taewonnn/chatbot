@@ -8,6 +8,7 @@ export default function Chat() {
 
   /** 질문 입력 내용 저장*/
   const [question, setQuestion] = useState('');
+  const [newMessages, setNewMessages] = useState<any[]>([]); // 새로 추가된 메시지
 
   // 질문 버튼 클릭 시
   const handleSend = () => {
@@ -16,8 +17,21 @@ export default function Chat() {
       return;
     }
 
+    // 1. UI에 즉시 표시 (Optimistic Update)
+    const userMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: question,
+      timestamp: new Date(),
+    };
+
+    setNewMessages(prev => [...prev, userMessage]);
+
+    // 2. 훅 호출 (나중에 구현)
+    // sendMessage(question);
+
+    // 3. 입력창 클리어
     setQuestion('');
-    // @todo AI에 질문 API + firestore에 저장 로직(커스텀훅)
   };
 
   // id가 있을 때만 메시지 표시
@@ -32,27 +46,35 @@ export default function Chat() {
       {/* 채팅 영역 */}
       <div className="flex-1 overflow-y-auto bg-white">
         {isExistingChat ? (
-          // 기존 채팅 메시지들 표시
+          // 기존 채팅 메시지들 + 새로 추가된 메시지들
           <div>
-            {messages.map(message =>
-              message.role === 'assistant' ? (
+            {[...messages, ...newMessages].map(message => {
+              const messageTime = message?.timestamp?.toDate
+                ? message.timestamp.toDate()
+                : new Date();
+
+              return message.role == 'assistant' ? (
                 <div key={message.id} className="">
                   <strong>{message.role}:</strong> {message.content}
+                  <span className="text-xs text-gray-500">{messageTime.toLocaleString()}</span>
                 </div>
               ) : (
                 <div key={message.id} className="rounded-lg bg-gray-100 p-2">
                   <strong>{message.role}:</strong> {message.content}
+                  <span className="text-xs text-gray-500">{messageTime.toLocaleString()}</span>
                 </div>
-              ),
-            )}
+              );
+            })}
           </div>
         ) : (
-          // 새 채팅 안내 메시지
-          <div className="flex h-full items-center justify-center">
-            <div className="text-center">
-              <h2 className="mb-4 text-2xl font-semibold text-gray-700">무엇을 도와드릴까요?</h2>
-              <p className="text-gray-500">질문이나 도움이 필요한 내용을 입력해주세요.</p>
-            </div>
+          // 새 채팅일 때는 새로 입력한 메시지만 표시
+          <div>
+            {newMessages.map(message => (
+              <div key={message.id} className="rounded-lg bg-gray-100 p-2">
+                <strong>{message.role}:</strong> {message.content}
+                <span className="text-xs text-gray-500">{message.timestamp.toLocaleString()}</span>
+              </div>
+            ))}
           </div>
         )}
       </div>
