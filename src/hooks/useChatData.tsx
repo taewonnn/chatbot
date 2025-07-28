@@ -30,8 +30,11 @@ export const useGetList = (uid: string) => {
     }
 
     try {
-      // orderBy 제거하고 클라이언트에서 정렬
-      const q = query(collection(db, 'chats'), where('uid', '==', uid));
+      const q = query(
+        collection(db, 'chats'),
+        where('uid', '==', uid),
+        orderBy('createdAt', 'desc'), // 시간순
+      );
       const snapshot = await getDocs(q);
 
       if (snapshot.empty) {
@@ -42,15 +45,6 @@ export const useGetList = (uid: string) => {
           id: doc.id,
           ...doc.data(),
         }));
-
-        // 클라이언트에서 Timestamp 정렬
-        chats.sort((a, b) => {
-          const aTime = (a as any).createdAt?.toDate?.() || new Date(0);
-          const bTime = (b as any).createdAt?.toDate?.() || new Date(0);
-          return bTime.getTime() - aTime.getTime(); // 최신순
-        });
-
-        console.log('정렬된 chatList:', chats);
         setChatList(chats);
       }
     } catch (error) {
