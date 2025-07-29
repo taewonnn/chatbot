@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useUserStore } from '../store/userStore';
 import { useGetList } from '../hooks/useChatData';
+import { useResponsiveClick } from '../hooks/useResponsiveClick';
 import { useEffect } from 'react';
 
 interface ISideBar {
@@ -43,6 +44,9 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
     }
   };
 
+  // 모바일에서만 사이드바 닫기
+  const handleMobileClose = useResponsiveClick(onClose);
+
   return (
     <>
       {/* 모바일 오버레이 */}
@@ -63,7 +67,7 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
               <Link
                 to="/"
                 className="flex w-full items-center gap-3 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white hover:bg-gray-700"
-                onClick={onClose} // 새 채팅 클릭 시에도 사이드바 닫기
+                onClick={handleMobileClose}
               >
                 <FiPlus className="h-4 w-4" />새 채팅
               </Link>
@@ -85,11 +89,7 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
                 <div className="space-y-1">
                   {chatList.length > 0 ? (
                     chatList.map((chat, index) => (
-                      <Link
-                        to={`/chat/${chat.id}`}
-                        key={index}
-                        onClick={onClose} // 채팅 클릭 시에도 사이드바 닫기
-                      >
+                      <Link to={`/chat/${chat.id}`} key={index} onClick={handleMobileClose}>
                         <div
                           key={index}
                           className="w-full rounded-lg px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-800"
