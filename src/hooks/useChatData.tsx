@@ -11,7 +11,7 @@ import {
 import { db } from '../firebase/firebase';
 import { VITE_OPENAI_API_KEY } from '../config/config';
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from '../store/userStore';
+import { useUserStore } from '../store/useUserStore';
 
 /**
  * 채팅 목록 가져오기

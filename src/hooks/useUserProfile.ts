@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-import { UserProfile as CustomUserProfile } from '../store/userStore';
+import { UserProfile as CustomUserProfile } from '../store/useUserStore';
 
 export const getUSerProfile = async (uid: string) => {
   // console.log('uid', uid);

@@ -1,7 +1,7 @@
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useEffect } from 'react';
 import { auth } from '../firebase/firebase';
-import { useUserStore } from '../store/userStore';
+import { useUserStore } from '../store/useUserStore';
 import { getUSerProfile } from './useUserProfile';
 
 export default function useAuth() {
