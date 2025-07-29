@@ -14,20 +14,12 @@ import useAuth from '../hooks/useAuth';
 import { useGetList } from '../hooks/useChatData';
 import { useResponsiveClick } from '../hooks/useResponsiveClick';
 import { useModalStore } from '../store/ModalStore';
-import TabModal from './TabModal';
+import TabModal, { SETTINGS_TABS } from './TabModal';
 
 interface ISideBar {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const tabs = [
-  { id: '1', label: '1번', content: <div>1번 내용</div> },
-  { id: '2', label: '2번', content: <div>2번 내용</div> },
-  { id: '3', label: '3번', content: <div>3번 내용</div> },
-  { id: '4', label: '4번', content: <div>4번 내용</div> },
-  { id: '5', label: '5번', content: <div>5번 내용</div> },
-];
 
 export default function SideBar({ isOpen, onClose }: ISideBar) {
   const navigate = useNavigate();
@@ -35,6 +27,7 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
 
   const [isListOpen, setIsListOpen] = useState(false); // 드롭다운 메뉴
   const [isSettingsOpen, setIsSettingsOpen] = useState(false); // 설정 모달
+  const [activeSettingsTab, setActiveSettingsTab] = useState<string>('general');
 
   /** 모달 */
   const { openConfirmModal } = useModalStore();
@@ -148,10 +141,7 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
                     <div className="space-y-1">
                       <div
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700"
-                        onClick={() => {
-                          console.log('open');
-                          setIsSettingsOpen(true);
-                        }}
+                        onClick={() => setIsSettingsOpen(true)} // 설정 클릭 시
                       >
                         <FiSettings className="h-4 w-4" />
                         <span>설정</span>
@@ -199,16 +189,14 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
         )}
       </aside>
       {/* 설정 모달 */}
-      {isSettingsOpen && (
-        <TabModal
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-          title="설정"
-          tabs={tabs}
-          activeTab="1"
-          onTabChange={() => {}}
-        />
-      )}
+      <TabModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        title="설정"
+        tabs={SETTINGS_TABS}
+        activeTab={activeSettingsTab}
+        onTabChange={setActiveSettingsTab}
+      />
     </>
   );
 }
