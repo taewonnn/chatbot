@@ -22,6 +22,16 @@
   animation: spin 1s linear infinite;
 }
 
+/* 부드러운 페이드인 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
