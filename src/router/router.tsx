@@ -10,7 +10,6 @@ import NotFoundPage from '../components/NotFoundPage';
 // 덜 사용되는 페이지들만 lazy loading
 const SignIn = lazy(() => import('../pages/SignIn'));
 const SignUp = lazy(() => import('../pages/SignUp'));
-const Settings = lazy(() => import('../pages/Settings'));
 
 export const router = createBrowserRouter([
   {
@@ -74,18 +73,6 @@ export const router = createBrowserRouter([
       {
         path: 'chat/:id',
         element: <Chat />,
-      },
-      {
-        path: 'settings',
-        element: (
-          <Suspense
-            fallback={
-              <LoadingSpinner size="xl" color="blue" centered={true} text="페이지 로딩 중..." />
-            }
-          >
-            <Settings />
-          </Suspense>
-        ),
       },
       { path: '*', element: <Navigate to="/" replace /> },
     ],
