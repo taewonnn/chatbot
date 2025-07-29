@@ -1,10 +1,18 @@
-import { FiPlus, FiSearch } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  FiPlus,
+  FiSearch,
+  FiChevronDown,
+  FiSettings,
+  FiHelpCircle,
+  FiLogOut,
+  FiUser,
+} from 'react-icons/fi';
+import { useUserStore } from '../store/useUserStore';
 import useAuth from '../hooks/useAuth';
-import { useUserStore } from '../store/userStore';
 import { useGetList } from '../hooks/useChatData';
 import { useResponsiveClick } from '../hooks/useResponsiveClick';
-import { useEffect } from 'react';
 
 interface ISideBar {
   isOpen: boolean;
@@ -14,6 +22,7 @@ interface ISideBar {
 export default function SideBar({ isOpen, onClose }: ISideBar) {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [isListOpen, setIsListOpen] = useState(false);
 
   /** 프로필 정보 */
   const { userProfile } = useUserStore();
@@ -105,23 +114,58 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
               </div>
             </div>
 
-            {/* 사용자 정보 */}
+            {/* 사용자 정보 및 드롭다운 */}
             <div className="border-t border-gray-700 p-4">
-              <div className="flex items-center justify-between">
+              {/* 드롭다운 메뉴 - 위쪽에 표시 */}
+              {isListOpen && (
+                <div className="mb-2 overflow-hidden rounded-lg bg-gray-800">
+                  {/* 메뉴 옵션들 */}
+                  <div className="p-2">
+                    <div className="space-y-1">
+                      <Link
+                        to="/settings"
+                        className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700"
+                      >
+                        <FiSettings className="h-4 w-4" />
+                        <span>설정</span>
+                      </Link>
+                      <div className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700">
+                        <FiHelpCircle className="h-4 w-4" />
+                        <span>도움말</span>
+                      </div>
+                      <div
+                        className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700"
+                        onClick={handleLogout}
+                      >
+                        <FiLogOut className="h-4 w-4" />
+                        <span>로그아웃</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 사용자 정보 헤더 */}
+              <div
+                className="flex cursor-pointer items-center justify-between rounded-lg p-2 transition-colors hover:bg-gray-800"
+                onClick={() => setIsListOpen(!isListOpen)}
+              >
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-blue-500"></div>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
+                    <FiUser className="h-4 w-4 text-white" />
+                  </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium text-white">
                       {userProfile?.name || '사용자'}
                     </span>
+                    <span className="text-xs text-gray-400">
+                      {userProfile?.email || 'user@example.com'}
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="h-4 w-4 text-yellow-400">◆</div>
-                  <button onClick={handleLogout} className="text-sm text-gray-400 hover:text-white">
-                    로그아웃
-                  </button>
-                </div>
+                <FiChevronDown
+                  className={`h-4 w-4 text-gray-400 transition-transform ${isListOpen ? 'rotate-180' : ''}`}
+                />
               </div>
             </div>
           </div>
