@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import SideBar from './SideBar';
 import GlobalHeader from './GlobalHeader';
+import Modal from './Modal';
 
 export default function Layout() {
-  const [isOpen, setIsOpen] = useState(false); // 모바일에서는 기본적으로 닫힌 상태
+  // 초기값을 화면 크기에 따라 설정
+  const [isOpen, setIsOpen] = useState(() => {
+    return window.innerWidth >= 768; // PC에서는 true, 모바일에서는 false
+  });
+
+  // 반응형 처리
+  useEffect(() => {
+    const handleResize = () => {
+      setIsOpen(window.innerWidth >= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleSidebar = () => setIsOpen(prev => !prev);
 
@@ -26,6 +39,9 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      {/* 모달 */}
+      <Modal />
     </div>
   );
 }
