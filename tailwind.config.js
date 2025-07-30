@@ -1,25 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    './index.html',
-    './src/**/*.{js,jsx,ts,tsx}',
-    './src/**/*.{html,js,jsx,ts,tsx}',
-    './src/components/**/*.{js,jsx,ts,tsx}',
-    './src/pages/**/*.{js,jsx,ts,tsx}',
-    './src/hooks/**/*.{js,jsx,ts,tsx}',
-    './src/store/**/*.{js,jsx,ts,tsx}',
-    './src/utils/**/*.{js,jsx,ts,tsx}',
-    './src/api/**/*.{js,jsx,ts,tsx}',
-    './src/config/**/*.{js,jsx,ts,tsx}',
-    './src/firebase/**/*.{js,jsx,ts,tsx}',
-    './src/guards/**/*.{js,jsx,ts,tsx}',
-    './src/router/**/*.{js,jsx,ts,tsx}',
-    './src/types/**/*.{js,jsx,ts,tsx}',
-    './src/assets/**/*.{js,jsx,ts,tsx}',
-    './src/**/*.html',
-    './dist/**/*.html',
-    './dist/**/*.{js,jsx,ts,tsx}',
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       fontFamily: {
@@ -41,18 +22,17 @@ export default {
           'sans-serif',
         ],
       },
-
       colors: {
         666: '#666666',
         999: '#999999',
       },
       screens: {
-        xs: '320px', // 매우 작은 모바일 디바이스
-        sm: '480px', // 커스텀 소형 디바이스
-        md: '768px', // 중형 디바이스
-        lg: '1024px', // 대형 디바이스
-        xl: '1280px', // 초대형 디바이스
-        '2xl': '1536px', // 제일 큰 화면
+        xs: '320px',
+        sm: '480px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px',
       },
     },
   },
