@@ -9,5 +9,23 @@ export default defineConfig({
     port: 3003,
     open: true,
   },
-  base: '/', // ✅ Vercel에서는 base: '/' 로 설정
+  base: '/',
+  css: {
+    postcss: './postcss.config.js',
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          firebase: ['firebase'],
+        },
+      },
+    },
+  },
 });
