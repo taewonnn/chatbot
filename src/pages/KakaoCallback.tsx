@@ -32,7 +32,7 @@ export default function KakaoCallback() {
   useEffect(() => {
     if (authCode) {
       getKakaoToken(authCode, {
-        onSuccess: data => {
+        onSuccess: (data: any) => {
           console.log('토큰 받기 성공?', data);
           setKakaoToken(data?.access_token || null); // 토큰 저장
         },
