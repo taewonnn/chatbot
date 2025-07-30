@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { VITE_KAKAO_REDIRECT_URI, VITE_KAKAO_REST_API_KEY } from '../config/config';
 import { signInUser } from '../api/auth';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
 interface SignInForm {
   email: string;
@@ -11,8 +11,21 @@ interface SignInForm {
 export default function SignIn() {
   const navigate = useNavigate();
 
-  const handleKakaoLogin = () => {
-    window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${VITE_KAKAO_REST_API_KEY}&redirect_uri=${VITE_KAKAO_REDIRECT_URI}&response_type=code`;
+  const handleKakaoLogin = async () => {
+    try {
+      // Firebase Function을 통해 안전한 로그인 URL 생성
+      const functions = getFunctions();
+      const getKakaoLoginUrlFunction = httpsCallable(functions, 'getKakaoLoginUrl');
+
+      const result = await getKakaoLoginUrlFunction();
+      const { loginUrl } = result.data as { loginUrl: string };
+
+      // 생성된 URL로 리다이렉트
+      window.location.href = loginUrl;
+    } catch (error) {
+      console.error('카카오 로그인 URL 생성 실패:', error);
+      alert('카카오 로그인을 준비하는 중 오류가 발생했습니다.');
+    }
   };
 
   /**

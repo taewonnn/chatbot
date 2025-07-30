@@ -70,6 +70,69 @@ export const getKakaoProfile = onCall({secrets: [kakaoRestApiKey]}, async (reque
   }
 });
 
+/** 카카오 토큰 교환 */
+export const getKakaoToken = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
+  try {
+    const {authCode} = request.data;
+
+    if (!authCode) {
+      throw new Error("인가 코드가 없습니다.");
+    }
+
+    // 환경에 따른 리다이렉트 URI 설정
+    const origin = request.rawRequest.headers.origin || "";
+    const isDevelopment = origin.includes("localhost") || origin.includes("127.0.0.1");
+    let redirectUri;
+    if (isDevelopment) {
+      redirectUri = "http://localhost:3003/auth/kakao/callback";
+    } else {
+      redirectUri = "https://chatbot-seven-snowy.vercel.app/auth/kakao/callback";
+    }
+
+    const response = await axios.post("https://kauth.kakao.com/oauth/token", null, {
+      params: {
+        grant_type: "authorization_code",
+        client_id: kakaoRestApiKey.value(),
+        redirect_uri: redirectUri,
+        code: authCode,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("카카오 토큰 교환 에러:", error);
+    throw new Error("카카오 토큰 교환 실패");
+  }
+});
+
+/** 카카오 로그인 URL 생성 */
+export const getKakaoLoginUrl = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
+  try {
+    const clientId = kakaoRestApiKey.value();
+
+    if (!clientId) {
+      throw new Error("카카오 REST API 키가 설정되지 않았습니다.");
+    }
+
+    // 환경에 따른 리다이렉트 URI 설정
+    const origin = request.rawRequest.headers.origin || "";
+    const isDevelopment = origin.includes("localhost") || origin.includes("127.0.0.1");
+    let redirectUri;
+    if (isDevelopment) {
+      redirectUri = "http://localhost:3003/auth/kakao/callback";
+    } else {
+      redirectUri = "https://chatbot-seven-snowy.vercel.app/auth/kakao/callback";
+    }
+
+    const loginUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+
+    return {loginUrl};
+  } catch (error) {
+    console.error("카카오 로그인 URL 생성 에러:", error);
+    throw new Error("카카오 로그인 URL 생성 실패");
+  }
+});
+
 /** OpenAI 채팅 */
 export const chatWithOpenAI = onCall({secrets: [openaiApiKey]}, async (request) => {
   try {
