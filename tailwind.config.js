@@ -3,6 +3,7 @@ export default {
   content: [
     './index.html',
     './src/**/*.{js,jsx,ts,tsx}',
+    './src/**/*.{html,js,jsx,ts,tsx}',
     './src/components/**/*.{js,jsx,ts,tsx}',
     './src/pages/**/*.{js,jsx,ts,tsx}',
     './src/hooks/**/*.{js,jsx,ts,tsx}',
@@ -14,6 +15,10 @@ export default {
     './src/guards/**/*.{js,jsx,ts,tsx}',
     './src/router/**/*.{js,jsx,ts,tsx}',
     './src/types/**/*.{js,jsx,ts,tsx}',
+    './src/assets/**/*.{js,jsx,ts,tsx}',
+    './src/**/*.html',
+    './dist/**/*.html',
+    './dist/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
     extend: {
