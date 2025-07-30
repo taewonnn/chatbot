@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
-import { useModalStore } from '../store/ModalStore';
+import { useModalStore } from '../store/useModalStore';
 
 export default function Modal() {
   const { isOpen, currentModal, modalData, closeModal } = useModalStore();

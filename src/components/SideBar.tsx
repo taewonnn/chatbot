@@ -13,7 +13,7 @@ import { useUserStore } from '../store/useUserStore';
 import useAuth from '../hooks/useAuth';
 import { useGetList } from '../hooks/useChatData';
 import { useResponsiveClick } from '../hooks/useResponsiveClick';
-import { useModalStore } from '../store/ModalStore';
+import { useModalStore } from '../store/useModalStore';
 import TabModal, { SETTINGS_TABS } from './TabModal';
 
 interface ISideBar {
