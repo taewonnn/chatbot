@@ -3,6 +3,11 @@ import axios from "axios";
 import * as admin from "firebase-admin";
 import {getAuth} from "firebase-admin/auth";
 import * as path from "path";
+import OpenAI from "openai";
+import {defineSecret} from "firebase-functions/params";
+
+export const openaiApiKey = defineSecret("OPENAI_API_KEY");
+export const kakaoRestApiKey = defineSecret("KAKAO_REST_API_KEY");
 
 // Firebase Admin SDK 초기화
 try {
@@ -44,7 +49,7 @@ export const createCustomToken = onCall(async (request) => {
 });
 
 /** 카카오 프로필 받기 */
-export const getKakaoProfile = onCall(async (request) => {
+export const getKakaoProfile = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
   try {
     const {token} = request.data;
 
@@ -62,5 +67,33 @@ export const getKakaoProfile = onCall(async (request) => {
   } catch (error) {
     console.error("카카오 프로필 요청 에러:", error);
     throw new Error("카카오 프로필 요청 실패");
+  }
+});
+
+/** OpenAI 채팅 */
+export const chatWithOpenAI = onCall({secrets: [openaiApiKey]}, async (request) => {
+  try {
+    const apiKey = openaiApiKey.value();
+
+    if (!apiKey) {
+      throw new Error("OpenAI API 키가 설정되지 않았습니다.");
+    }
+
+    const openai = new OpenAI({apiKey});
+
+    const {messages} = request.data;
+    if (!messages) throw new Error("메시지가 필요합니다.");
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages,
+    });
+
+    return {
+      result: completion.choices[0].message.content,
+    };
+  } catch (error) {
+    console.error("OpenAI API 에러:", error);
+    throw new Error("OpenAI 응답 생성 실패");
   }
 });

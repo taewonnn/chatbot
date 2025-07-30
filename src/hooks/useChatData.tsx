@@ -9,7 +9,7 @@ import {
   addDoc,
 } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-import { VITE_OPENAI_API_KEY } from '../config/config';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
 
@@ -152,22 +152,15 @@ export const useChatMessage = (id: string) => {
       console.error('메시지 저장 실패:', e);
     }
 
-    // 3. AI에 질문 POST 요청
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${VITE_OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content }],
-      }),
+    // 3. AI에 질문 POST 요청 (Firebase Functions 사용)
+    const functions = getFunctions();
+    const chatWithOpenAI = httpsCallable(functions, 'chatWithOpenAI');
+
+    const result = await chatWithOpenAI({
+      messages: [{ role: 'user', content }],
     });
 
-    const answer = await response.json();
-    console.log('answer', answer);
-    const aiContent = answer.choices[0].message.content;
+    const aiContent = (result.data as any).result;
 
     const newAiMessage = {
       role: 'assistant',
