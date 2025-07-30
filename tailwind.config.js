@@ -3,11 +3,17 @@ export default {
   content: [
     './index.html',
     './src/**/*.{js,jsx,ts,tsx}',
-    './src/**/*.{html,js,jsx,ts,tsx}',
     './src/components/**/*.{js,jsx,ts,tsx}',
     './src/pages/**/*.{js,jsx,ts,tsx}',
-    './src/**/*.html',
-    './dist/**/*.html',
+    './src/hooks/**/*.{js,jsx,ts,tsx}',
+    './src/store/**/*.{js,jsx,ts,tsx}',
+    './src/utils/**/*.{js,jsx,ts,tsx}',
+    './src/api/**/*.{js,jsx,ts,tsx}',
+    './src/config/**/*.{js,jsx,ts,tsx}',
+    './src/firebase/**/*.{js,jsx,ts,tsx}',
+    './src/guards/**/*.{js,jsx,ts,tsx}',
+    './src/router/**/*.{js,jsx,ts,tsx}',
+    './src/types/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
     extend: {
