@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetKakaoProfile, useGetKakaoToken } from '../api/useKakao';
 import { signInOrSignUpSnsUser } from '../api/auth';
-import { FadeLoader } from 'react-spinners';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function KakaoCallback() {
   const navigate = useNavigate();
@@ -73,8 +73,8 @@ export default function KakaoCallback() {
   }, [kakaoToken, profileData]);
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <FadeLoader color="#4D607B" />
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <LoadingSpinner size="xl" color="blue" centered={true} text="로딩 중..." />
     </div>
   );
 }
