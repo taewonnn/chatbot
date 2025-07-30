@@ -29,5 +29,6 @@ module.exports = {
     "arrow-parens": "off", // 화살표 함수 괄호 규칙 비활성화
     "import/no-unresolved": 0,
     indent: ["error", 2],
+    "max-len": "off",
   },
 };
