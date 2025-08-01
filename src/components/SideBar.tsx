@@ -28,7 +28,6 @@ export default function SideBar({ isOpen, onToggle }: ISideBar) {
   const { logout } = useAuth();
 
   const { userProfile } = useUserStore();
-  console.log('userProfile', userProfile);
 
   const handleLogout = async () => {
     try {
