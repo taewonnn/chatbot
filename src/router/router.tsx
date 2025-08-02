@@ -40,10 +40,10 @@ const router = createBrowserRouter([
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="chat" replace /> },
-      { path: 'chat', element: <Chat /> },
+      { index: true, element: <Chat /> }, // 루트 경로에서 Chat 컴포넌트 표시
+      { path: 'chat/:id', element: <Chat /> }, // 특정 채팅 ID로 접근
       { path: 'settings', element: <Settings /> },
-      // { path: '*', element: <></> },
+      { path: '*', element: <Navigate to="/" replace /> }, // 존재하지 않는 경로는 루트로 리다이렉트
     ],
   },
 ]);
