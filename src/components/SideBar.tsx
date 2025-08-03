@@ -3,7 +3,7 @@ import { FiPlus, FiSearch } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useUserStore } from '../store/userStore';
-import { useGetList } from '../hooks/useChat';
+import { useGetList } from '../hooks/useChatData';
 
 interface ISideBar {
   isOpen: boolean;

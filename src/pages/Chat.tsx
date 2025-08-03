@@ -1,6 +1,6 @@
 import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
-import { useGetChatDetail } from '../hooks/useChat';
+import { useGetChatDetail } from '../hooks/useChatData';
 
 export default function Chat() {
   const { id } = useParams(); // URL에서 채팅 ID 가져오기

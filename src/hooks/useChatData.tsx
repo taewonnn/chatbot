@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 
+/**
+ * 채팅 목록 가져오기
+ * @param uid 사용자 ID
+ * @returns 채팅 목록, 로딩 상태
+ */
 export const useGetList = (uid: string) => {
   const [chatList, setChatList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +49,11 @@ export const useGetList = (uid: string) => {
   return { chatList, loading };
 };
 
+/**
+ * 채팅 상세 페이지에서 메시지 가져오기
+ * @param id 채팅 ID
+ * @returns 메시지 목록, 로딩 상태
+ */
 export const useGetChatDetail = (id: string) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
