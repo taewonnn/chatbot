@@ -36,7 +36,7 @@ export default function LoadingSpinner({
       <div
         className={`${sizeClasses[size]} animate-spin-custom rounded-full border-4 border-gray-200 ${colorClasses[color]} border-t-transparent`}
       />
-      {text && <div className="text-lg font-medium text-gray-600">{text}</div>}
+      {text && <div className="theme-text-secondary text-lg font-medium">{text}</div>}
     </div>
   );
 }

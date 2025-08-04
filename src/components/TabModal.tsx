@@ -29,30 +29,30 @@ export const SETTINGS_TABS: Tab[] = [
     content: (
       <div className="space-y-4">
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">AI 모델</label>
-          <select className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label className="theme-text-secondary mb-2 block text-sm font-medium">AI 모델</label>
+          <select className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
             <option value="gpt-4">GPT-4</option>
           </select>
         </div>
         <div>
-          <div className="mb-3">맞춤 설정</div>
+          <div className="theme-text-secondary mb-3">맞춤 설정</div>
           <form action="" className="flex flex-col gap-2">
-            <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="nickname" className="theme-text-secondary block text-sm font-medium">
               어떻게 불러드리면 좋을까요?
             </label>
             <input
               type="text"
               id="nickname"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="닉네임을 적어주세요."
             />
-            <label htmlFor="features" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="features" className="theme-text-secondary block text-sm font-medium">
               어떤 특성을 지녔으면 하나요?
             </label>
             <textarea
               id="features"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="특성을 적어주세요."
             />
           </form>
@@ -66,31 +66,31 @@ export const SETTINGS_TABS: Tab[] = [
     content: (
       <div className="space-y-4">
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">이름</label>
+          <label className="theme-text-secondary mb-2 block text-sm font-medium">이름</label>
           <input
             type="text"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="이름을 입력하세요"
           />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">이메일</label>
+          <label className="theme-text-secondary mb-2 block text-sm font-medium">이메일</label>
           <input
             type="email"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="이메일을 입력하세요"
           />
         </div>
         <div>
           <label className="flex items-center">
             <input type="checkbox" className="mr-2" />
-            <span className="text-sm text-gray-700">개인정보 수집 동의</span>
+            <span className="theme-text-secondary text-sm">개인정보 수집 동의</span>
           </label>
         </div>
         <div>
           <label className="flex items-center">
             <input type="checkbox" className="mr-2" />
-            <span className="text-sm text-gray-700">마케팅 정보 수신</span>
+            <span className="theme-text-secondary text-sm">마케팅 정보 수신</span>
           </label>
         </div>
       </div>
@@ -119,25 +119,28 @@ export default function TabModal({
   const activeTabContent = tabs.find(tab => tab.id === activeTab)?.content;
 
   return (
-    <div className="z-60 fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
       {/* 배경 오버레이 */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="theme-overlay absolute inset-0 transition-opacity"
         onClick={handleOverlayClick}
       />
 
       {/* 모달 컨테이너 */}
-      <div className="relative mx-4 w-full max-w-2xl rounded-lg bg-white shadow-xl">
+      <div className="theme-bg-primary relative w-full max-w-2xl rounded-lg shadow-xl">
         {/* 헤더 */}
-        <div className="flex items-center justify-between border-b border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 transition-colors hover:text-gray-600">
+        <div className="theme-border-primary flex items-center justify-between border-b p-6">
+          <h2 className="theme-text-primary text-lg font-semibold">{title}</h2>
+          <button
+            onClick={onClose}
+            className="theme-text-tertiary hover:theme-text-secondary transition-colors"
+          >
             <FiX className="h-5 w-5" />
           </button>
         </div>
 
         {/* 탭 네비게이션 */}
-        <div className="border-b border-gray-200">
+        <div className="theme-border-primary border-b">
           <nav className="flex space-x-8 px-6">
             {tabs.map(tab => (
               <button
@@ -145,8 +148,8 @@ export default function TabModal({
                 onClick={() => onTabChange(tab.id)}
                 className={`border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'theme-text-tertiary hover:theme-text-secondary border-transparent'
                 }`}
               >
                 {tab.label}

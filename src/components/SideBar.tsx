@@ -76,9 +76,7 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
   return (
     <>
       {/* 모바일 오버레이 */}
-      {isOpen && (
-        <div className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden" onClick={onClose} />
-      )}
+      {isOpen && <div className="theme-overlay fixed inset-0 z-40 md:hidden" onClick={onClose} />}
 
       {/* 사이드바 */}
       <aside

@@ -25,7 +25,7 @@ export default function Layout() {
   const closeSidebar = () => setIsOpen(false);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="theme-bg-secondary flex h-screen">
       {/* 사이드바 */}
       <SideBar isOpen={isOpen} onClose={closeSidebar} />
 
@@ -35,7 +35,7 @@ export default function Layout() {
         <GlobalHeader onToggle={toggleSidebar} />
 
         {/* 본문 영역 */}
-        <main className="flex-1 overflow-auto bg-white">
+        <main className="theme-bg-primary flex-1 overflow-auto">
           <Outlet />
         </main>
       </div>

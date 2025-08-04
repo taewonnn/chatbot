@@ -90,7 +90,7 @@ export default function Chat() {
   return (
     <div className="flex h-full flex-col">
       {/* 채팅 영역 */}
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div className="theme-bg-secondary flex-1 overflow-y-auto">
         {isExistingChat ? (
           <div className="space-y-6 p-4">
             {allMessages.map(message => (
@@ -102,7 +102,7 @@ export default function Chat() {
                   className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                     message.role === 'user'
                       ? 'bg-blue-500 text-white'
-                      : 'border border-gray-200 bg-white text-gray-800 shadow-sm'
+                      : 'theme-border-primary theme-bg-primary theme-text-primary border shadow-sm'
                   }`}
                 >
                   <div className="text-sm leading-relaxed">
@@ -114,7 +114,7 @@ export default function Chat() {
                   </div>
                   <div
                     className={`mt-2 text-xs ${
-                      message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                      message.role === 'user' ? 'text-blue-100' : 'theme-text-tertiary'
                     }`}
                   >
                     {message.timestamp?.toDate?.()?.toLocaleString() || '방금 전'}
@@ -128,8 +128,8 @@ export default function Chat() {
             {/* 로딩 표시 */}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
-                  <div className="flex items-center gap-2 text-gray-500">
+                <div className="theme-border-primary theme-bg-primary rounded-2xl border px-4 py-3 shadow-sm">
+                  <div className="theme-text-tertiary flex items-center gap-2">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500"></div>
                     <span className="text-sm">AI가 답변을 생성하고 있습니다...</span>
                   </div>
@@ -156,8 +156,8 @@ export default function Chat() {
             {/* AI 답변 - 로딩 중 */}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
-                  <div className="flex items-center gap-2 text-gray-500">
+                <div className="theme-border-primary theme-bg-primary rounded-2xl border px-4 py-3 shadow-sm">
+                  <div className="theme-text-tertiary flex items-center gap-2">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500"></div>
                     <span className="text-sm">AI가 답변을 생성하고 있습니다...</span>
                   </div>
@@ -169,12 +169,12 @@ export default function Chat() {
       </div>
 
       {/* 입력 영역 */}
-      <div className="border-t border-gray-200 bg-white p-4">
+      <div className="theme-border-primary theme-bg-primary border-t p-4">
         <div className="mx-auto max-w-4xl">
-          <div className="flex items-end gap-3 rounded-2xl border border-gray-300 bg-white p-3 transition-all focus-within:border-blue-500 focus-within:shadow-lg">
+          <div className="theme-border-secondary theme-bg-secondary flex items-end gap-3 rounded-2xl border p-3 transition-all focus-within:border-blue-500 focus-within:shadow-lg">
             <textarea
               placeholder="메시지를 입력하세요..."
-              className="flex-1 resize-none border-none bg-transparent p-2 text-sm leading-relaxed outline-none"
+              className="theme-text-primary flex-1 resize-none border-none bg-transparent p-2 text-sm leading-relaxed outline-none"
               rows={1}
               style={{ minHeight: '24px', maxHeight: '120px' }}
               value={question}
@@ -197,7 +197,7 @@ export default function Chat() {
               )}
             </button>
           </div>
-          <p className="mt-2 text-center text-xs text-gray-500">
+          <p className="theme-text-tertiary mt-2 text-center text-xs">
             AI는 실수를 할 수 있습니다. 중요한 정보는 확인해주세요.
           </p>
         </div>

@@ -49,23 +49,25 @@ export default function Modal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* 배경 오버레이 */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="theme-overlay absolute inset-0 transition-opacity"
         onClick={handleOverlayClick}
       />
 
       {/* 모달 컨테이너 */}
-      <div className={`relative mx-4 w-full max-w-md rounded-lg bg-white shadow-xl`}>
+      <div className="theme-bg-primary theme-border-primary relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border shadow-xl">
         {/* 헤더 */}
-        <div className="flex items-center justify-between border-b border-gray-200 p-6">
+        <div className="theme-border-primary flex items-center justify-between border-b p-6">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900">{modalData.title || '알림'}</h2>
+            <h2 className="theme-text-primary text-lg font-semibold">
+              {modalData.title || '알림'}
+            </h2>
           </div>
           <button
             onClick={closeModal}
-            className="text-gray-400 transition-colors hover:text-gray-600"
+            className="theme-text-tertiary hover:theme-text-secondary transition-colors"
           >
             <FiX className="h-5 w-5" />
           </button>
@@ -74,7 +76,7 @@ export default function Modal() {
         {/* 내용 */}
         <div className="p-6">
           {modalData.message && (
-            <p className="leading-relaxed text-gray-700">{modalData.message}</p>
+            <p className="theme-text-secondary leading-relaxed">{modalData.message}</p>
           )}
 
           {/* 추가 컨텐츠 영역 */}
@@ -82,12 +84,12 @@ export default function Modal() {
         </div>
 
         {/* 푸터 (버튼들) */}
-        <div className="flex items-center justify-end gap-3 border-t border-gray-200 p-6">
+        <div className="theme-border-primary flex items-center justify-end gap-3 border-t p-6">
           {/* 취소 버튼 (confirm 모달에서만 표시) */}
           {currentModal === 'confirm' && (
             <button
               onClick={handleCancel}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="theme-border-secondary theme-bg-secondary theme-text-secondary hover:theme-bg-tertiary rounded-md border px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {modalData.cancelText || '취소'}
             </button>
@@ -96,7 +98,7 @@ export default function Modal() {
           {/* 확인/확인 버튼 */}
           <button
             onClick={handleConfirm}
-            className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="theme-accent theme-accent-hover rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             {modalData.confirmText || '확인'}
           </button>

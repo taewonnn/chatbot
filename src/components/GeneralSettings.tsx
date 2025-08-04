@@ -1,13 +1,14 @@
 import { useState } from 'react';
+import { useThemeStore } from '../store/useThemeStore';
 
 export default function GeneralSettings() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const { theme, setTheme } = useThemeStore();
   const [language, setLanguage] = useState<'ko' | 'en'>('ko');
 
   return (
     <div className="space-y-6">
       <div>
-        <label className="mb-3 block text-sm font-medium text-gray-700">테마</label>
+        <label className="theme-text-secondary mb-3 block text-sm font-medium">테마</label>
         <div className="flex gap-4">
           <label className="flex cursor-pointer items-center">
             <input
@@ -15,9 +16,9 @@ export default function GeneralSettings() {
               value="light"
               checked={theme === 'light'}
               onChange={e => setTheme(e.target.value as 'light' | 'dark')}
-              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600"
             />
-            <span className="ml-3 text-sm text-gray-700">라이트 모드</span>
+            <span className="theme-text-secondary ml-3 text-sm">라이트 모드</span>
           </label>
           <label className="flex cursor-pointer items-center">
             <input
@@ -25,14 +26,14 @@ export default function GeneralSettings() {
               value="dark"
               checked={theme === 'dark'}
               onChange={e => setTheme(e.target.value as 'light' | 'dark')}
-              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600"
             />
-            <span className="ml-3 text-sm text-gray-700">다크 모드</span>
+            <span className="theme-text-secondary ml-3 text-sm">다크 모드</span>
           </label>
         </div>
       </div>
       <div>
-        <label className="mb-3 block text-sm font-medium text-gray-700">언어</label>
+        <label className="theme-text-secondary mb-3 block text-sm font-medium">언어</label>
         <div className="flex gap-4">
           <label className="flex cursor-pointer items-center">
             <input
@@ -40,9 +41,9 @@ export default function GeneralSettings() {
               value="ko"
               checked={language === 'ko'}
               onChange={e => setLanguage(e.target.value as 'ko' | 'en')}
-              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600"
             />
-            <span className="ml-3 text-sm text-gray-700">한국어</span>
+            <span className="theme-text-secondary ml-3 text-sm">한국어</span>
           </label>
           <label className="flex cursor-pointer items-center">
             <input
@@ -50,9 +51,9 @@ export default function GeneralSettings() {
               value="en"
               checked={language === 'en'}
               onChange={e => setLanguage(e.target.value as 'ko' | 'en')}
-              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600"
             />
-            <span className="ml-3 text-sm text-gray-700">English</span>
+            <span className="theme-text-secondary ml-3 text-sm">English</span>
           </label>
         </div>
       </div>

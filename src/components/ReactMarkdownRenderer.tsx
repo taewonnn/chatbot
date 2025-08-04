@@ -6,18 +6,18 @@ interface IMarkdownRenderer {
 
 export default function MarkdownRenderer({ content }: IMarkdownRenderer) {
   return (
-    <div className="prose prose-sm max-w-none">
+    <div className="prose prose-sm dark:prose-invert max-w-none">
       <ReactMarkdown
         components={{
           // p 태그 -> div로 변경
           p: ({ children }: any) => <div className="mb-2">{children}</div>,
           code: ({ node, inline, className, children, ...props }: any) => {
             return inline ? (
-              <code className="rounded bg-gray-100 px-1 py-0.5 text-sm" {...props}>
+              <code className="theme-bg-tertiary rounded px-1 py-0.5 text-sm" {...props}>
                 {children}
               </code>
             ) : (
-              <pre className="overflow-x-auto rounded-lg bg-gray-100 p-3">
+              <pre className="theme-bg-tertiary overflow-x-auto rounded-lg p-3">
                 <code className={className} {...props}>
                   {children}
                 </code>
