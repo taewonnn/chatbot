@@ -13,16 +13,31 @@ import { useUserStore } from '../store/useUserStore';
 import useAuth from '../hooks/useAuth';
 import { useGetList } from '../hooks/useChatData';
 import { useResponsiveClick } from '../hooks/useResponsiveClick';
+import { useModalStore } from '../store/ModalStore';
+import TabModal from './TabModal';
 
 interface ISideBar {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const tabs = [
+  { id: '1', label: '1번', content: <div>1번 내용</div> },
+  { id: '2', label: '2번', content: <div>2번 내용</div> },
+  { id: '3', label: '3번', content: <div>3번 내용</div> },
+  { id: '4', label: '4번', content: <div>4번 내용</div> },
+  { id: '5', label: '5번', content: <div>5번 내용</div> },
+];
+
 export default function SideBar({ isOpen, onClose }: ISideBar) {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [isListOpen, setIsListOpen] = useState(false);
+
+  const [isListOpen, setIsListOpen] = useState(false); // 드롭다운 메뉴
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false); // 설정 모달
+
+  /** 모달 */
+  const { openConfirmModal } = useModalStore();
 
   /** 프로필 정보 */
   const { userProfile } = useUserStore();
@@ -51,6 +66,15 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
       alert('로그아웃 중 오류 발생 - 다시 시도해주세요');
       console.log(e);
     }
+  };
+
+  /** 로그아웃 확인 모달 */
+  const handleLogoutClick = () => {
+    openConfirmModal({
+      title: '로그아웃',
+      message: '정말로 로그아웃하시겠습니까?',
+      onConfirm: handleLogout,
+    });
   };
 
   // 모바일에서만 사이드바 닫기
@@ -122,20 +146,23 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
                   {/* 메뉴 옵션들 */}
                   <div className="p-2">
                     <div className="space-y-1">
-                      <Link
-                        to="/settings"
+                      <div
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700"
+                        onClick={() => {
+                          console.log('open');
+                          setIsSettingsOpen(true);
+                        }}
                       >
                         <FiSettings className="h-4 w-4" />
                         <span>설정</span>
-                      </Link>
+                      </div>
                       <div className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700">
                         <FiHelpCircle className="h-4 w-4" />
                         <span>도움말</span>
                       </div>
                       <div
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700"
-                        onClick={handleLogout}
+                        onClick={handleLogoutClick}
                       >
                         <FiLogOut className="h-4 w-4" />
                         <span>로그아웃</span>
@@ -171,6 +198,17 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
           </div>
         )}
       </aside>
+      {/* 설정 모달 */}
+      {isSettingsOpen && (
+        <TabModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          title="설정"
+          tabs={tabs}
+          activeTab="1"
+          onTabChange={() => {}}
+        />
+      )}
     </>
   );
 }
