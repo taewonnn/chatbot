@@ -18,5 +18,3 @@ export const getUSerProfile = async (uid: string) => {
     return null;
   }
 };
-
-// export const updateUserProfile = (uid: string, updates: Partial<UserProfile>) => {};
