@@ -9,6 +9,7 @@ export interface UserProfile {
   gender?: string;
   phone?: string;
   createdAt: Date | string;
+  isSnsUser?: boolean;
 }
 
 interface UserStore {

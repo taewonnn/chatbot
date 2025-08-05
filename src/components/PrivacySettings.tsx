@@ -5,6 +5,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import useAuth from '../hooks/useAuth';
 import { useModalStore } from '../store/useModalStore';
+import { useUserStore } from '../store/useUserStore';
 
 interface FormData {
   displayName: string;
@@ -14,8 +15,8 @@ interface FormData {
 
 export default function PrivacySettings() {
   const { user } = useAuth();
-  console.log('user:', user);
-  console.log('user.uid:', user?.uid);
+  const { userProfile } = useUserStore();
+  console.log('userProfile:', userProfile);
 
   const [isLoading, setIsLoading] = useState(false);
   const { openAlertModal } = useModalStore();
@@ -131,42 +132,50 @@ export default function PrivacySettings() {
         )}
       </div>
 
-      {/* 새 비밀번호 */}
-      <div>
-        <label className="theme-text-secondary mb-2 block text-sm font-medium">새 비밀번호</label>
-        <input
-          type="password"
-          {...register('newPassword', {
-            minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
-          })}
-          className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="새로운 비밀번호를 입력해주세요 (선택사항)"
-        />
-        {errors.newPassword && (
-          <p className="mt-1 text-sm text-red-500">{errors.newPassword.message}</p>
-        )}
-      </div>
+      {!userProfile?.isSnsUser && (
+        <>
+          {/* 새 비밀번호 */}
+          <div>
+            <label className="theme-text-secondary mb-2 block text-sm font-medium">
+              새 비밀번호
+            </label>
+            <input
+              type="password"
+              {...register('newPassword', {
+                minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
+              })}
+              className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="새로운 비밀번호를 입력해주세요 (선택사항)"
+            />
+            {errors.newPassword && (
+              <p className="mt-1 text-sm text-red-500">{errors.newPassword.message}</p>
+            )}
+          </div>
 
-      {/* 비밀번호 확인 */}
-      <div>
-        <label className="theme-text-secondary mb-2 block text-sm font-medium">비밀번호 확인</label>
-        <input
-          type="password"
-          {...register('confirmPassword', {
-            validate: value => {
-              if (newPassword && value !== newPassword) {
-                return '비밀번호가 일치하지 않습니다.';
-              }
-              return true;
-            },
-          })}
-          className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="새로운 비밀번호를 다시 입력해주세요"
-        />
-        {errors.confirmPassword && (
-          <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>
-        )}
-      </div>
+          {/* 비밀번호 확인 */}
+          <div>
+            <label className="theme-text-secondary mb-2 block text-sm font-medium">
+              비밀번호 확인
+            </label>
+            <input
+              type="password"
+              {...register('confirmPassword', {
+                validate: value => {
+                  if (newPassword && value !== newPassword) {
+                    return '비밀번호가 일치하지 않습니다.';
+                  }
+                  return true;
+                },
+              })}
+              className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="새로운 비밀번호를 다시 입력해주세요"
+            />
+            {errors.confirmPassword && (
+              <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>
+            )}
+          </div>
+        </>
+      )}
 
       <button
         type="submit"
