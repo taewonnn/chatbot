@@ -10,6 +10,10 @@ export interface UserProfile {
   phone?: string;
   createdAt: Date | string;
   isSnsUser?: boolean;
+  aiSettings?: {
+    nickname: string;
+    features: string;
+  };
 }
 
 interface UserStore {
