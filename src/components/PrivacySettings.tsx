@@ -19,7 +19,7 @@ export default function PrivacySettings() {
 
   console.log('userProfile:', userProfile);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { openAlertModal } = useModalStore();
 
   const {
@@ -39,6 +39,9 @@ export default function PrivacySettings() {
   const newPassword = watch('newPassword');
 
   const onSubmit = async (data: FormData) => {
+    if (isSubmitting) return; // 중복 제출 방지
+    setIsSubmitting(true);
+
     if (!user) {
       openAlertModal({
         title: '오류',
@@ -46,8 +49,6 @@ export default function PrivacySettings() {
       });
       return;
     }
-
-    setIsLoading(true);
 
     try {
       // 1. Firebase Auth의 displayName 업데이트
@@ -107,7 +108,7 @@ export default function PrivacySettings() {
         });
       }
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -202,10 +203,10 @@ export default function PrivacySettings() {
 
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={isSubmitting}
         className="theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isLoading ? '수정 중...' : '수정하기'}
+        수정하기
       </button>
     </form>
   );
