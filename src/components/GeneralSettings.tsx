@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { useThemeStore } from '../store/useThemeStore';
+import { useLanguageStore } from '../store/useLanguageStore';
 
 export default function GeneralSettings() {
-  const { theme, setTheme } = useThemeStore();
-  const [language, setLanguage] = useState<'ko' | 'en'>('ko');
+  const { theme, setTheme } = useThemeStore(); // 테마
+  const { language, setLanguage } = useLanguageStore(); // 언어
 
   return (
     <div className="space-y-6">
