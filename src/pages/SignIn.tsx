@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInUser } from '../api/auth';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 
 interface SignInForm {
   email: string;
@@ -13,12 +12,14 @@ export default function SignIn() {
 
   const handleKakaoLogin = async () => {
     try {
-      // Firebase Function을 통해 안전한 로그인 URL 생성
-      const functions = getFunctions();
-      const getKakaoLoginUrlFunction = httpsCallable(functions, 'getKakaoLoginUrl');
+      // 카카오 로그인 URL 직접 생성
+      const clientId = import.meta.env.VITE_KAKAO_REST_API_KEY;
+      if (!clientId) {
+        throw new Error('카카오 API 키가 설정되지 않았습니다.');
+      }
 
-      const result = await getKakaoLoginUrlFunction();
-      const { loginUrl } = result.data as { loginUrl: string };
+      const redirectUri = window.location.origin + '/auth/kakao/callback';
+      const loginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
 
       // 생성된 URL로 리다이렉트
       window.location.href = loginUrl;

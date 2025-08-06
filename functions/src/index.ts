@@ -38,40 +38,7 @@ export const test = onCall(async () => {
   }
 });
 
-/** SNS custom 토큰 발급 */
-export const createCustomToken = onCall(async (request) => {
-  const {uid} = request.data;
-
-  const auth = getAuth();
-  const customToken = await auth.createCustomToken(uid);
-
-  return {customToken};
-});
-
-/** 카카오 프로필 받기 */
-export const getKakaoProfile = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
-  try {
-    const {token} = request.data;
-
-    if (!token) {
-      throw new Error("토큰이 없습니다.");
-    }
-
-    const response = await axios.get("https://kapi.kakao.com/v2/user/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("카카오 프로필 요청 에러:", error);
-    throw new Error("카카오 프로필 요청 실패");
-  }
-});
-
-/** 카카오 토큰 교환 */
-export const getKakaoToken = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
+export const handleKakaoLogin = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
   try {
     const {authCode} = request.data;
 
@@ -89,7 +56,9 @@ export const getKakaoToken = onCall({secrets: [kakaoRestApiKey]}, async (request
       redirectUri = "https://chatbot-seven-snowy.vercel.app/auth/kakao/callback";
     }
 
-    const response = await axios.post("https://kauth.kakao.com/oauth/token", null, {
+    // 1. 인가 코드로 액세스 토큰 발급
+    console.log("1. 액세스 토큰 발급 시작");
+    const tokenResponse = await axios.post("https://kauth.kakao.com/oauth/token", null, {
       params: {
         grant_type: "authorization_code",
         client_id: kakaoRestApiKey.value(),
@@ -98,38 +67,90 @@ export const getKakaoToken = onCall({secrets: [kakaoRestApiKey]}, async (request
       },
     });
 
-    return response.data;
-  } catch (error) {
-    console.error("카카오 토큰 교환 에러:", error);
-    throw new Error("카카오 토큰 교환 실패");
-  }
-});
+    const accessToken = tokenResponse.data.access_token;
+    console.log("1. 액세스 토큰 발급 완료");
 
-/** 카카오 로그인 URL 생성 */
-export const getKakaoLoginUrl = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
-  try {
-    const clientId = kakaoRestApiKey.value();
+    // 2. 액세스 토큰으로 프로필 정보 조회
+    console.log("2. 프로필 정보 조회 시작");
+    const profileResponse = await axios.get("https://kapi.kakao.com/v2/user/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-    if (!clientId) {
-      throw new Error("카카오 REST API 키가 설정되지 않았습니다.");
+    const profile = profileResponse.data;
+    console.log("2. 프로필 정보 조회 완료");
+
+    // 3. 기존 사용자 확인
+    console.log("3. 기존 사용자 확인 시작");
+    const db = admin.firestore();
+    const userRef = db.collection("users");
+    const snapshot = await userRef
+      .where("provider", "==", "kakao")
+      .where("snsId", "==", profile.id.toString())
+      .get();
+
+    if (!snapshot.empty) {
+      // 기존 유저인 경우 -> 로그인
+      console.log("3. 기존 유저 로그인 처리");
+      const userData = snapshot.docs[0].data();
+
+      // 커스텀 토큰 생성
+      const auth = getAuth();
+      const customToken = await auth.createCustomToken(userData.uid);
+
+      return {
+        success: true,
+        isNewUser: false,
+        customToken: customToken,
+        user: userData,
+        profile: profile,
+      };
     }
 
-    // 환경에 따른 리다이렉트 URI 설정
-    const origin = request.rawRequest.headers.origin || "";
-    const isDevelopment = origin.includes("localhost") || origin.includes("127.0.0.1");
-    let redirectUri;
-    if (isDevelopment) {
-      redirectUri = "http://localhost:3003/auth/kakao/callback";
-    } else {
-      redirectUri = "https://chatbot-seven-snowy.vercel.app/auth/kakao/callback";
-    }
+    // 4. 새로운 유저인 경우 -> 회원가입
+    console.log("3. 새로운 유저 회원가입 처리");
+    const tempEmail = profile.kakao_account?.email || `kakao_${profile.id}@kakao.com`;
+    const tempPassword = `kakao_${profile.id}_${Date.now()}`;
 
-    const loginUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+    // Firebase Auth 생성
+    const auth = getAuth();
+    const userRecord = await auth.createUser({
+      email: tempEmail,
+      password: tempPassword,
+      displayName: profile.kakao_account.profile.name || profile.kakao_account.profile.nickname,
+    });
 
-    return {loginUrl};
+    // Firestore에 저장
+    const userData = {
+      uid: userRecord.uid,
+      name: profile.kakao_account.profile.name || profile.kakao_account.profile.nickname,
+      email: tempEmail,
+      provider: "kakao",
+      snsId: profile.id.toString(),
+      isSnsUser: true,
+      createdAt: new Date().toISOString(),
+      gender: null,
+      phone: null,
+    };
+
+    await db.collection("users").doc(userRecord.uid).set(userData);
+
+    // 커스텀 토큰 생성
+    const customToken = await auth.createCustomToken(userRecord.uid);
+
+    console.log("4. 회원가입 완료");
+
+    return {
+      success: true,
+      isNewUser: true,
+      customToken: customToken,
+      user: userData,
+      profile: profile,
+    };
   } catch (error) {
-    console.error("카카오 로그인 URL 생성 에러:", error);
-    throw new Error("카카오 로그인 URL 생성 실패");
+    console.error("카카오 로그인 처리 에러:", error);
+    throw new Error("카카오 로그인 처리 실패");
   }
 });
 
