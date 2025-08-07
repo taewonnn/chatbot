@@ -6,6 +6,7 @@ import Chat from '../pages/Chat';
 import KakaoCallback from '../pages/KakaoCallback';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NotFoundPage from '../components/NotFoundPage';
+import NaverCallback from '../pages/NaverCallback';
 
 // 덜 사용되는 페이지들만 lazy loading
 const SignIn = lazy(() => import('../pages/SignIn'));
@@ -52,6 +53,21 @@ export const router = createBrowserRouter([
           }
         >
           <KakaoCallback />
+        </Suspense>
+      </AuthGuard>
+    ),
+    errorElement: <NotFoundPage />,
+  },
+  {
+    path: '/auth/naver/callback',
+    element: (
+      <AuthGuard mode="guest">
+        <Suspense
+          fallback={
+            <LoadingSpinner size="xl" color="blue" centered={true} text="페이지 로딩 중..." />
+          }
+        >
+          <NaverCallback />
         </Suspense>
       </AuthGuard>
     ),
