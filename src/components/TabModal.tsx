@@ -66,7 +66,7 @@ export default function TabModal({
       />
 
       {/* 모달 컨테이너 */}
-      <div className="theme-bg-primary relative w-full max-w-2xl rounded-lg shadow-xl">
+      <div className="theme-bg-primary relative h-[60%] w-full max-w-2xl rounded-lg shadow-xl">
         {/* 헤더 */}
         <div className="theme-border-primary flex items-center justify-between border-b p-6">
           <h2 className="theme-text-primary text-lg font-semibold">{title}</h2>
