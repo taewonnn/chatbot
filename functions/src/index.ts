@@ -8,6 +8,8 @@ import {defineSecret} from "firebase-functions/params";
 
 export const openaiApiKey = defineSecret("OPENAI_API_KEY");
 export const kakaoRestApiKey = defineSecret("KAKAO_REST_API_KEY");
+export const naverClientId = defineSecret("NAVER_CLIENT_ID");
+export const naverClientSecret = defineSecret("NAVER_CLIENT_SECRET");
 
 // Firebase Admin SDK 초기화
 try {
@@ -38,6 +40,7 @@ export const test = onCall(async () => {
   }
 });
 
+/** 카카오 로그인 */
 export const handleKakaoLogin = onCall({secrets: [kakaoRestApiKey]}, async (request) => {
   try {
     const {authCode} = request.data;
@@ -153,6 +156,117 @@ export const handleKakaoLogin = onCall({secrets: [kakaoRestApiKey]}, async (requ
     throw new Error("카카오 로그인 처리 실패");
   }
 });
+
+/** 네이버 로그인 */
+export const handleNaverLogin = onCall(
+  {secrets: [naverClientId, naverClientSecret]},
+  async (request) => {
+    try {
+      const {code, state} = request.data;
+
+      if (!code) {
+        throw new Error("인가 코드가 없습니다.");
+      }
+
+      console.log("네이버 로그인 처리 시작");
+
+      // 1. 프론트에서 받아온 code로 accessToken 발급받기
+      const tokenResponse = await axios.post("https://nid.naver.com/oauth2.0/token", null, {
+        params: {
+          grant_type: "authorization_code",
+          client_id: naverClientId.value(),
+          client_secret: naverClientSecret.value(),
+          code: code,
+          state: state,
+        },
+      });
+
+      const accessToken = tokenResponse.data.access_token;
+
+      console.log("1. 액세스 토큰 발급 완료", accessToken);
+
+      // 2. accessToken으로 프로필 정보 조회
+      const profileResponse = await axios.get("https://openapi.naver.com/v1/nid/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const profile = profileResponse.data;
+      console.log("2. 프로필 정보 조회 완료", profile);
+
+      // 3. 기존 사용자 확인
+      const db = admin.firestore();
+      const userRef = db.collection("users");
+      const snapshot = await userRef
+        .where("provider", "==", "naver")
+        .where("snsId", "==", profile.response.id)
+        .get();
+
+      if (!snapshot.empty) {
+        // 기존 유저인 경우 -> 로그인
+        console.log("3. 기존 유저 로그인 처리");
+        const userData = snapshot.docs[0].data();
+
+        // 커스텀 토큰 생성
+        const auth = getAuth();
+        const customToken = await auth.createCustomToken(userData.uid);
+
+        console.log("3. 기존 유저 로그인 완료");
+
+        return {
+          success: true,
+          isNewUser: false,
+          customToken: customToken,
+          user: userData,
+          profile: profile,
+        };
+      }
+
+      // 4. 새로운 유저인 경우 -> 회원가입
+      console.log("3. 새로운 유저 회원가입 처리");
+      const tempEmail = profile.response.email || `naver_${profile.response.id}@naver.com`;
+      const tempPassword = `naver_${profile.response.id}_${Date.now()}`;
+
+      // Firebase Auth 생성
+      const auth = getAuth();
+      const userRecord = await auth.createUser({
+        email: tempEmail,
+        password: tempPassword,
+        displayName: profile.response.name,
+      });
+
+      // Firestore에 저장
+      const userData = {
+        uid: userRecord.uid,
+        name: profile.response.name,
+        email: tempEmail,
+        provider: "naver",
+        snsId: profile.response.id.toString(),
+        isSnsUser: true,
+        createdAt: new Date().toISOString(),
+        gender: null,
+        phone: null,
+      };
+
+      await db.collection("users").doc(userRecord.uid).set(userData);
+
+      // 커스텀 토큰 생성
+      const customToken = await auth.createCustomToken(userRecord.uid);
+
+      return {
+        success: true,
+        isNewUser: true,
+        customToken: customToken,
+        user: userData,
+        profile: profile,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new Error("네이버 로그인 처리 실패");
+    }
+  }
+);
 
 /** OpenAI 채팅 */
 export const chatWithOpenAI = onCall({secrets: [openaiApiKey]}, async (request) => {
