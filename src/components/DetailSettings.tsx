@@ -61,36 +61,39 @@ export default function DetailSettings() {
   };
 
   return (
-    <div className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-      <form action="" className="flex flex-col gap-2">
-        <label htmlFor="nickname" className="theme-text-secondary block text-sm font-medium">
+    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+      <div>
+        <label htmlFor="nickname" className="theme-text-secondary mb-2 block text-sm font-medium">
           어떻게 불러드리면 좋을까요?
         </label>
         <input
           type="text"
           id="nickname"
+          autoComplete="nickname"
           className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="닉네임을 적어주세요."
           {...register('nickname')}
         />
-        <label htmlFor="features" className="theme-text-secondary block text-sm font-medium">
+      </div>
+      <div>
+        <label htmlFor="features" className="theme-text-secondary mb-2 block text-sm font-medium">
           어떤 특성을 지녔으면 하나요?
         </label>
         <textarea
           id="features"
+          autoComplete="features"
           className="theme-border-secondary theme-bg-secondary theme-text-primary h-[10rem] w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="특성을 적어주세요."
           {...register('features')}
         />
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          저장하기
-        </button>
-      </form>
-    </div>
+      </div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        저장하기
+      </button>
+    </form>
   );
 }

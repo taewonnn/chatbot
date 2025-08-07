@@ -88,6 +88,7 @@ export default function SignIn() {
               <input
                 type="email"
                 id="email"
+                autoComplete="email"
                 placeholder="이메일을 입력해주세요"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 {...register('email', {
@@ -109,6 +110,7 @@ export default function SignIn() {
               <input
                 type="password"
                 id="password"
+                autoComplete="password"
                 placeholder="비밀번호를 입력해주세요"
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 placeholder-gray-400 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 {...register('password', {

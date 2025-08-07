@@ -122,6 +122,7 @@ export default function PrivacySettings() {
         <input
           id="email"
           type="email"
+          autoComplete="email"
           className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={user?.email || ''}
           disabled
@@ -136,6 +137,7 @@ export default function PrivacySettings() {
         <input
           id="name"
           type="text"
+          autoComplete="name"
           {...register('displayName', {
             required: '이름을 입력해주세요.',
             minLength: { value: 2, message: '이름은 2자 이상이어야 합니다.' },
@@ -161,6 +163,7 @@ export default function PrivacySettings() {
             <input
               id="newPassword"
               type="password"
+              autoComplete="new-password"
               {...register('newPassword', {
                 minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
               })}
@@ -183,6 +186,7 @@ export default function PrivacySettings() {
             <input
               id="passwordConfirm"
               type="password"
+              autoComplete="new-password"
               {...register('confirmPassword', {
                 validate: value => {
                   if (newPassword && value !== newPassword) {
