@@ -2,6 +2,8 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInUser } from '../api/auth';
 import SnsLoginButton from '../components/common/SnsLoginButton';
+import { useModalStore } from '../store/useModalStore';
+import Modal from '../components/common/Modal';
 
 interface SignInForm {
   email: string;
@@ -10,6 +12,7 @@ interface SignInForm {
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const { openAlertModal } = useModalStore();
 
   /**
    * form 상태 관리
@@ -33,17 +36,17 @@ export default function SignIn() {
       console.log('로그인 실패:', e);
       if (e instanceof Error) {
         if (e.message === '존재하지 않는 이메일입니다.') {
-          alert('존재하지 않는 이메일입니다.');
+          openAlertModal({ message: '존재하지 않는 이메일입니다.' });
         } else if (e.message === 'SNS 계정입니다. SNS 로그인을 이용해주세요.') {
-          alert('SNS 계정입니다. SNS 로그인을 이용해주세요.');
+          openAlertModal({ message: 'SNS 계정입니다. SNS 로그인을 이용해주세요.' });
         } else {
           const firebaseError = e as any;
           if (firebaseError.code === 'auth/user-not-found') {
-            alert('존재하지 않는 이메일입니다.');
+            openAlertModal({ message: '존재하지 않는 이메일입니다.' });
           } else if (firebaseError.code === 'auth/invalid-credential') {
-            alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+            openAlertModal({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
           } else {
-            alert('로그인에 실패했습니다. 다시 시도해주세요.');
+            openAlertModal({ message: '로그인에 실패했습니다. 다시 시도해주세요.' });
           }
         }
       }
@@ -134,6 +137,9 @@ export default function SignIn() {
           </p>
         </div>
       </div>
+
+      {/* 모달 */}
+      <Modal />
     </div>
   );
 }
