@@ -1,14 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  FiPlus,
-  FiSearch,
-  FiChevronDown,
-  FiSettings,
-  FiHelpCircle,
-  FiLogOut,
-  FiUser,
-} from 'react-icons/fi';
+import { FiPlus, FiSearch, FiChevronDown, FiSettings, FiLogOut, FiUser } from 'react-icons/fi';
 import { useUserStore } from '../store/useUserStore';
 import useAuth from '../hooks/useAuth';
 import { useGetList } from '../hooks/useChatData';
@@ -25,9 +17,10 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const [isListOpen, setIsListOpen] = useState(false); // 드롭다운 메뉴
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false); // 설정 모달
+  const [isListOpen, setIsListOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState<string>('general');
+  const [searchQuery, setSearchQuery] = useState(''); // 검색 쿼리
 
   /** 모달 */
   const { openConfirmModal } = useModalStore();
@@ -37,7 +30,15 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
 
   /** 채팅 목록 */
   const { chatList, refetch } = useGetList(userProfile?.uid || '');
-  console.log('chatList', chatList);
+
+  /** 검색된 채팅 목록 */
+  const filteredChatList = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return chatList; // 검색어가 없으면 전체 목록 return
+    }
+
+    return chatList.filter(chat => chat.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [chatList, searchQuery]);
 
   /** 새 채팅 생성 시 목록 새로고침 */
   useEffect(() => {
@@ -99,20 +100,39 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
 
             {/* 검색 */}
             <div className="px-4 pb-4">
-              <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-gray-800">
-                <FiSearch className="h-4 w-4" />
-                채팅 검색
-              </button>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <FiSearch className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="채팅 검색..."
+                  className="theme-bg-tertiary theme-text-primary theme-border-secondary w-full rounded-lg border px-3 py-2 pl-10 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+                {/* 검색어가 있을 때 클리어 버튼 */}
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-300"
+                  >
+                    <span className="text-sm">×</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* 모델/기능 목록 */}
             <div className="flex-1 overflow-y-auto px-4">
               {/* 채팅 목록 */}
               <div className="mt-6">
-                <h3 className="mb-2 px-3 text-xs font-semibold uppercase text-gray-400">채팅</h3>
+                <h3 className="mb-2 px-3 text-xs font-semibold uppercase text-gray-400">
+                  채팅 {searchQuery && `(${filteredChatList.length}개)`}
+                </h3>
                 <div className="space-y-1">
-                  {chatList.length > 0 ? (
-                    chatList.map((chat, index) => (
+                  {filteredChatList.length > 0 ? (
+                    filteredChatList.map((chat, index) => (
                       <Link to={`/chat/${chat.id}`} key={index} onClick={handleMobileClose}>
                         <div
                           key={index}
@@ -122,6 +142,10 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
                         </div>
                       </Link>
                     ))
+                  ) : searchQuery ? (
+                    <p className="mt-3 text-center text-gray-400">
+                      "{searchQuery}"에 대한 검색 결과가 없습니다.
+                    </p>
                   ) : (
                     <p className="mt-3 text-center text-white">새로운 채팅을 시작해보세요.</p>
                   )}
@@ -139,15 +163,12 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
                     <div className="space-y-1">
                       <div
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700"
-                        onClick={() => setIsSettingsOpen(true)} // 설정 클릭 시
+                        onClick={() => setIsSettingsOpen(true)}
                       >
                         <FiSettings className="h-4 w-4" />
                         <span>설정</span>
                       </div>
-                      <div className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700">
-                        <FiHelpCircle className="h-4 w-4" />
-                        <span>도움말</span>
-                      </div>
+
                       <div
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm text-gray-300 hover:bg-gray-700"
                         onClick={handleLogoutClick}
@@ -186,6 +207,7 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
           </div>
         )}
       </aside>
+
       {/* 설정 모달 */}
       <TabModal
         isOpen={isSettingsOpen}
