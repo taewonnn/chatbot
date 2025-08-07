@@ -37,9 +37,14 @@ export default function SnsLoginButton({ provider, className = '' }: SnsLoginBut
       } else if (provider === 'naver') {
         const state = uuid();
         const clientId = import.meta.env.VITE_NAVER_CLIENT_ID;
+        if (!clientId) {
+          throw new Error('네이버 API 키가 설정되지 않았습니다.');
+        }
+
         const redirectUri = window.location.origin + '/auth/naver/callback';
         const loginUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}`;
 
+        console.log('네이버 로그인 URL:', loginUrl);
         window.location.href = loginUrl;
       }
     } catch (error) {
