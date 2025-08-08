@@ -1,7 +1,7 @@
 import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useChatMessage, useGetChatDetail } from '../hooks/useChatData';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MarkdownRenderer from '../components/ReactMarkdownRenderer';
 import useAutoScroll from '../hooks/useAutoScroll';
 
@@ -19,8 +19,14 @@ export default function Chat() {
   const { sendMessage } = useChatMessage(id || '');
 
   // 스크롤 훅
-
   const { messageEndRef } = useAutoScroll([messages.length, newMessages.length]);
+
+  // Firestore에서 메시지를 가져올 때마다 newMessages 클리어
+  useEffect(() => {
+    if (messages.length > 0) {
+      setNewMessages([]);
+    }
+  }, [messages.length]);
 
   // 질문 버튼 클릭 시
   const handleSend = async () => {
@@ -43,7 +49,6 @@ export default function Chat() {
     // 새로운 메시지 추가
     setNewMessages(prev => {
       const updated = [...prev, userMessage];
-
       return updated;
     });
 
@@ -71,13 +76,24 @@ export default function Chat() {
   // id가 있을 때만 메시지 표시
   const isExistingChat = !!id;
 
+  // 중복 제거를 위해 메시지 합치기
+  const allMessages = isExistingChat
+    ? [
+        ...messages,
+        ...newMessages.filter(
+          newMsg =>
+            !messages.some(msg => msg.content === newMsg.content && msg.role === newMsg.role),
+        ),
+      ]
+    : newMessages;
+
   return (
     <div className="flex h-full flex-col">
       {/* 채팅 영역 */}
       <div className="flex-1 overflow-y-auto bg-gray-50">
         {isExistingChat ? (
           <div className="space-y-6 p-4">
-            {[...messages, ...newMessages].map(message => (
+            {allMessages.map(message => (
               <div
                 key={message.id}
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
