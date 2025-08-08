@@ -7,6 +7,7 @@ import { useGetList } from '../hooks/useChatData';
 import { useResponsiveClick } from '../hooks/useResponsiveClick';
 import { useModalStore } from '../store/useModalStore';
 import TabModal, { SETTINGS_TABS } from './TabModal';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface ISideBar {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState<string>('general');
   const [searchQuery, setSearchQuery] = useState(''); // 검색 쿼리
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   /** 모달 */
   const { openConfirmModal } = useModalStore();
@@ -33,12 +35,14 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
 
   /** 검색된 채팅 목록 */
   const filteredChatList = useMemo(() => {
-    if (!searchQuery.trim()) {
+    if (!debouncedSearchQuery.trim()) {
       return chatList; // 검색어가 없으면 전체 목록 return
     }
 
-    return chatList.filter(chat => chat.title.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [chatList, searchQuery]);
+    return chatList.filter(chat =>
+      chat.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()),
+    );
+  }, [chatList, debouncedSearchQuery]);
 
   /** 새 채팅 생성 시 목록 새로고침 */
   useEffect(() => {
