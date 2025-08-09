@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus, FiSearch, FiChevronDown, FiSettings, FiLogOut, FiUser } from 'react-icons/fi';
 import { useUserStore } from '../store/useUserStore';
@@ -7,7 +7,6 @@ import { useGetList } from '../hooks/useChatData';
 import { useResponsiveClick } from '../hooks/useResponsiveClick';
 import { useModalStore } from '../store/useModalStore';
 import TabModal, { SETTINGS_TABS } from './TabModal';
-import { useDebounce } from '../hooks/useDebounce';
 
 interface ISideBar {
   isOpen: boolean;
@@ -18,11 +17,13 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const [isListOpen, setIsListOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [activeSettingsTab, setActiveSettingsTab] = useState<string>('general');
+  const [isListOpen, setIsListOpen] = useState(false); // 드롭다운 메뉴
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false); // 설정 모달
+  const [activeSettingsTab, setActiveSettingsTab] = useState<string>('general'); // 설정 탭
   const [searchQuery, setSearchQuery] = useState(''); // 검색 쿼리
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [sidebarWidth, setSidebarWidth] = useState(256); // 기본 너비 256px
+  const [isResizing, setIsResizing] = useState(false); // 리사이징 상태
+  const sidebarRef = useRef<HTMLElement>(null); // 사이드바 참조
 
   /** 모달 */
   const { openConfirmModal } = useModalStore();
@@ -35,14 +36,48 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
 
   /** 검색된 채팅 목록 */
   const filteredChatList = useMemo(() => {
-    if (!debouncedSearchQuery.trim()) {
-      return chatList; // 검색어가 없으면 전체 목록 return
+    if (!searchQuery.trim()) {
+      return chatList;
     }
+    return chatList.filter(chat => chat.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [chatList, searchQuery]);
 
-    return chatList.filter(chat =>
-      chat.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()),
-    );
-  }, [chatList, debouncedSearchQuery]);
+  /** 리사이징 시작 */
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
+
+  /** 리사이징 중 */
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isResizing) return;
+
+    const newWidth = e.clientX;
+    const minWidth = 250; // 최소 너비
+    const maxWidth = 400; // 최대 너비
+
+    if (newWidth >= minWidth && newWidth <= maxWidth) {
+      setSidebarWidth(newWidth);
+    }
+  };
+
+  /** 리사이징 종료 */
+  const handleMouseUp = () => {
+    setIsResizing(false);
+  };
+
+  /** 마우스 이벤트 리스너 등록/해제 */
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isResizing]);
 
   /** 새 채팅 생성 시 목록 새로고침 */
   useEffect(() => {
@@ -85,9 +120,15 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
 
       {/* 사이드바 */}
       <aside
+        ref={sidebarRef}
         className={`fixed z-50 h-screen flex-shrink-0 overflow-hidden bg-gray-900 transition-all duration-300 md:relative ${
-          isOpen ? 'w-80 translate-x-0 md:w-64' : 'w-80 -translate-x-full md:w-0 md:translate-x-0'
+          isOpen ? 'translate-x-0 md:translate-x-0' : '-translate-x-full md:w-0 md:translate-x-0'
         }`}
+        style={{
+          width: isOpen ? `${sidebarWidth}px` : '0px',
+          minWidth: isOpen ? '250px' : '0px',
+          maxWidth: isOpen ? '400px' : '0px',
+        }}
       >
         {isOpen && (
           <div className="flex h-full flex-col">
@@ -115,15 +156,6 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
                   placeholder="채팅 검색..."
                   className="theme-bg-tertiary theme-text-primary theme-border-secondary w-full rounded-lg border px-3 py-2 pl-10 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
-                {/* 검색어가 있을 때 클리어 버튼 */}
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-300"
-                  >
-                    <span className="text-sm">×</span>
-                  </button>
-                )}
               </div>
             </div>
 
@@ -210,6 +242,12 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
             </div>
           </div>
         )}
+
+        {/* 리사이징 핸들 */}
+        <div
+          className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-transparent transition-colors hover:bg-gray-700"
+          onMouseDown={handleMouseDown}
+        />
       </aside>
 
       {/* 설정 모달 */}
