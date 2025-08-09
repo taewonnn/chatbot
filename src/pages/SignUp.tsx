@@ -15,7 +15,7 @@ export interface SignUpForm {
   phone: string;
 }
 
-function SignUp() {
+export default function SignUp() {
   const navigate = useNavigate();
 
   /** 아이디 사용가능 상태 관리*/
@@ -298,5 +298,3 @@ function SignUp() {
     </div>
   );
 }
-
-export default SignUp;

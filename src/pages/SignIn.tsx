@@ -8,7 +8,7 @@ interface SignInForm {
   password: string;
 }
 
-function SignIn() {
+export default function SignIn() {
   const navigate = useNavigate();
 
   const handleKakaoLogin = () => {
@@ -149,5 +149,3 @@ function SignIn() {
     </div>
   );
 }
-
-export default SignIn;

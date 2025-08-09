@@ -4,7 +4,7 @@ import { auth } from '../firebase/firebase';
 import { useUserStore } from '../store/userStore';
 import { getUSerProfile } from './useUserProfile';
 
-function useAuth() {
+export default function useAuth() {
   const { authUser, setAuthUser, loading, setUserProfile, setLoading, clearUser } = useUserStore();
 
   useEffect(() => {
@@ -40,5 +40,3 @@ function useAuth() {
 
   return { user: authUser, loading, logout };
 }
-
-export default useAuth;

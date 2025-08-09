@@ -7,7 +7,7 @@ interface IAuthGuard {
   children: React.ReactNode;
 }
 
-function AuthGuard({ mode, children }: IAuthGuard) {
+export default function AuthGuard({ mode, children }: IAuthGuard) {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -30,5 +30,3 @@ function AuthGuard({ mode, children }: IAuthGuard) {
 
   return <>{children}</>;
 }
-
-export default AuthGuard;
