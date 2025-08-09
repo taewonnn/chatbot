@@ -7,7 +7,7 @@ import Chat from '../pages/Chat';
 import Settings from '../pages/Settings';
 import KakaoCallback from '../pages/KakaoCallback';
 
-export default const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: '/signin',
     element: (
@@ -47,5 +47,3 @@ export default const router = createBrowserRouter([
     ],
   },
 ]);
-
-
