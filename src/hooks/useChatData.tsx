@@ -9,6 +9,7 @@ import {
   addDoc,
   deleteDoc,
   doc,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -221,5 +222,24 @@ export const useChatMessage = (id: string) => {
  * @returns Promise
  */
 export const deleteChat = async (id: string) => {
-  await deleteDoc(doc(db, 'chats', id));
+  try {
+    // 1. 서브컬렉션의 모든 문서 삭제
+    const messagesRef = collection(db, 'chats', id, 'message');
+    const messagesSnapshot = await getDocs(messagesRef);
+
+    // 배치 작업으로 모든 메시지 삭제
+    const batch = writeBatch(db);
+    messagesSnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+
+    // 2. 메인 채팅 문서 삭제
+    await deleteDoc(doc(db, 'chats', id));
+
+    console.log('채팅과 모든 메시지가 삭제되었습니다:', id);
+  } catch (error) {
+    console.error('채팅 삭제 실패:', error);
+    throw error;
+  }
 };
