@@ -1,16 +1,15 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import AuthGuard from '../guards/AuthGuard';
 import Chat from '../pages/Chat';
-import KakaoCallback from '../pages/KakaoCallback';
+import AuthGuard from '../guards/AuthGuard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import NotFoundPage from '../pages/NotFoundPage';
-import NaverCallback from '../pages/NaverCallback';
 
-// 덜 사용되는 페이지들만 lazy loading
 const SignIn = lazy(() => import('../pages/SignIn'));
 const SignUp = lazy(() => import('../pages/SignUp'));
+const KakaoCallback = lazy(() => import('../pages/KakaoCallback'));
+const NaverCallback = lazy(() => import('../pages/NaverCallback'));
 
 export const router = createBrowserRouter([
   {
@@ -77,18 +76,40 @@ export const router = createBrowserRouter([
     path: '/',
     element: (
       <AuthGuard mode="auth">
-        <Layout />
+        <Suspense
+          fallback={
+            <LoadingSpinner size="xl" color="blue" centered={true} text="페이지 로딩 중..." />
+          }
+        >
+          <Layout />
+        </Suspense>
       </AuthGuard>
     ),
     errorElement: <NotFoundPage />,
     children: [
       {
         index: true,
-        element: <Chat />,
+        element: (
+          <Suspense
+            fallback={
+              <LoadingSpinner size="xl" color="blue" centered={true} text="채팅 로딩 중..." />
+            }
+          >
+            <Chat />
+          </Suspense>
+        ),
       },
       {
         path: 'chat/:id',
-        element: <Chat />,
+        element: (
+          <Suspense
+            fallback={
+              <LoadingSpinner size="xl" color="blue" centered={true} text="채팅 로딩 중..." />
+            }
+          >
+            <Chat />
+          </Suspense>
+        ),
       },
       { path: '*', element: <Navigate to="/" replace /> },
     ],
