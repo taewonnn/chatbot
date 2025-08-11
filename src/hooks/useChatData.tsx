@@ -7,6 +7,8 @@ import {
   orderBy,
   serverTimestamp,
   addDoc,
+  deleteDoc,
+  doc,
 } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -211,4 +213,13 @@ export const useChatMessage = (id: string) => {
   };
 
   return { sendMessage };
+};
+
+/**
+ * 채팅 삭제 함수
+ * @param id 채팅 ID
+ * @returns Promise
+ */
+export const deleteChat = async (id: string) => {
+  await deleteDoc(doc(db, 'chats', id));
 };

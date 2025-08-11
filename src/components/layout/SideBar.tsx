@@ -1,9 +1,17 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiPlus, FiSearch, FiChevronDown, FiSettings, FiLogOut, FiUser } from 'react-icons/fi';
+import {
+  FiPlus,
+  FiSearch,
+  FiChevronDown,
+  FiSettings,
+  FiLogOut,
+  FiUser,
+  FiTrash2,
+} from 'react-icons/fi';
 import { useUserStore } from '../../store/useUserStore';
 import useAuth from '../../hooks/useAuth';
-import { useGetList } from '../../hooks/useChatData';
+import { deleteChat, useGetList } from '../../hooks/useChatData';
 import { useResponsiveClick } from '../../hooks/useResponsiveClick';
 import { useModalStore } from '../../store/useModalStore';
 import TabModal, { SETTINGS_TABS } from '../common/TabModal';
@@ -90,6 +98,30 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
     return () => window.removeEventListener('chatCreated', handleChatCreated);
   }, [refetch]);
 
+  /** 채팅 삭제 */
+  const handleDeleteChat = async (chatId: string, chatTitle: string) => {
+    openConfirmModal({
+      title: '채팅 삭제',
+      message: `"${chatTitle}" 채팅을 삭제하시겠습니까?`,
+      onConfirm: async () => {
+        try {
+          // deleteChat 함수 사용
+          await deleteChat(chatId);
+          // 삭제 후 목록 새로고침
+          refetch();
+
+          // 현재 페이지가 삭제된 채팅 페이지라면 홈으로 이동
+          const currentPath = window.location.pathname;
+          if (currentPath === `/chat/${chatId}`) {
+            navigate('/');
+          }
+        } catch (error) {
+          console.error('채팅 삭제 실패:', error);
+        }
+      },
+    });
+  };
+
   /** 로그아웃 */
   const handleLogout = async () => {
     try {
@@ -169,14 +201,28 @@ export default function SideBar({ isOpen, onClose }: ISideBar) {
                 <div className="space-y-1">
                   {filteredChatList.length > 0 ? (
                     filteredChatList.map((chat, index) => (
-                      <Link to={`/chat/${chat.id}`} key={index} onClick={handleMobileClose}>
-                        <div
-                          key={index}
-                          className="w-full rounded-lg px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-800"
+                      <div key={index} className="group relative flex items-center">
+                        <Link
+                          to={`/chat/${chat.id}`}
+                          onClick={handleMobileClose}
+                          className="flex-1"
                         >
-                          {chat.title}
-                        </div>
-                      </Link>
+                          <div className="w-full rounded-lg px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-800">
+                            {chat.title}
+                          </div>
+                        </Link>
+                        <button
+                          onClick={e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDeleteChat(chat.id, chat.title);
+                          }}
+                          className="absolute right-[-10px] block rounded p-1 text-gray-400 hover:bg-gray-700 hover:text-red-400 md:right-1 md:hidden md:group-hover:block"
+                          title="채팅 삭제"
+                        >
+                          <FiTrash2 className="h-3 w-3" />
+                        </button>
+                      </div>
                     ))
                   ) : searchQuery ? (
                     <p className="mt-3 text-center text-gray-400">
