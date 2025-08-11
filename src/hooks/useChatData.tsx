@@ -152,12 +152,35 @@ export const useChatMessage = (id: string) => {
       console.error('메시지 저장 실패:', e);
     }
 
-    // 3. AI에 질문 POST 요청 (Firebase Functions 사용)
+    // 3. AI 설정 정보 가져오기
+    const aiSettings = userProfile?.aiSettings;
+    let systemMessage = '';
+
+    // AI 설정이 있으면 시스템 메시지 생성
+    if (aiSettings?.nickname || aiSettings?.features) {
+      const nickname = aiSettings.nickname ? `사용자의 이름은 "${aiSettings.nickname}"입니다.` : '';
+      const features = aiSettings.features ? `사용자의 특성: ${aiSettings.features}` : '';
+
+      systemMessage = `${nickname} ${features}`.trim();
+
+      // 더 자연스러운 시스템 메시지로 구성
+      systemMessage = `당신은 친근하고 도움이 되는 AI 어시스턴트입니다. ${systemMessage} 이 정보를 바탕으로 사용자에게 개인화된 답변을 제공해주세요.`;
+    }
+
+    // 4. AI에 질문 POST 요청 (Firebase Functions 사용)
     const functions = getFunctions();
     const chatWithOpenAI = httpsCallable(functions, 'chatWithOpenAI');
 
+    // 시스템 메시지가 있으면 포함해서 전송
+    const messages = systemMessage
+      ? [
+          { role: 'system', content: systemMessage },
+          { role: 'user', content },
+        ]
+      : [{ role: 'user', content }];
+
     const result = await chatWithOpenAI({
-      messages: [{ role: 'user', content }],
+      messages,
     });
 
     const aiContent = (result.data as any).result;
