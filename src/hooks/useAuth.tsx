@@ -5,7 +5,8 @@ import { useUserStore } from '../store/useUserStore';
 import { getUSerProfile } from './useUserProfile';
 
 export default function useAuth() {
-  const { authUser, setAuthUser, loading, setUserProfile, setLoading, clearUser } = useUserStore();
+  const { authUser, setAuthUser, loading, setUserProfile, setLoading, clearUser, userProfile } =
+    useUserStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
@@ -38,5 +39,5 @@ export default function useAuth() {
     }
   };
 
-  return { user: authUser, loading, logout };
+  return { user: authUser, userProfile, loading, logout };
 }

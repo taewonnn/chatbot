@@ -5,7 +5,6 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import useAuth from '../hooks/useAuth';
 import { useModalStore } from '../store/useModalStore';
-import { useUserStore } from '../store/useUserStore';
 
 interface FormData {
   displayName: string;
@@ -14,8 +13,8 @@ interface FormData {
 }
 
 export default function PrivacySettings() {
-  const { user } = useAuth();
-  const { userProfile } = useUserStore();
+  const { user, userProfile } = useAuth();
+
   console.log('userProfile:', userProfile);
 
   const [isLoading, setIsLoading] = useState(false);
