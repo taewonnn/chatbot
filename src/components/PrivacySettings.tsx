@@ -5,6 +5,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import useAuth from '../hooks/useAuth';
 import { useModalStore } from '../store/useModalStore';
+import { useUserStore } from '../store/useUserStore';
 
 interface FormData {
   displayName: string;
@@ -14,6 +15,7 @@ interface FormData {
 
 export default function PrivacySettings() {
   const { user, userProfile } = useAuth();
+  const { setUserProfile } = useUserStore();
 
   console.log('userProfile:', userProfile);
 
@@ -57,6 +59,14 @@ export default function PrivacySettings() {
         // 2. Firestore의 name 필드도 업데이트
         const userDocRef = doc(db, 'users', user.uid);
         await updateDoc(userDocRef, {
+          name: data.displayName,
+        });
+      }
+
+      // 3. zustand 업데이트
+      if (userProfile) {
+        setUserProfile({
+          ...userProfile,
           name: data.displayName,
         });
       }
