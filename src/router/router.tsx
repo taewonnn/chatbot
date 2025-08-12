@@ -5,7 +5,7 @@ import AuthGuard from '../guards/AuthGuard';
 import Chat from '../pages/Chat';
 import KakaoCallback from '../pages/KakaoCallback';
 import LoadingSpinner from '../components/LoadingSpinner';
-import NotFoundPage from '../components/NotFoundPage';
+import NotFoundPage from '../pages/NotFoundPage';
 import NaverCallback from '../pages/NaverCallback';
 
 // 덜 사용되는 페이지들만 lazy loading
