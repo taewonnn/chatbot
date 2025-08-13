@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInUser } from '../api/auth';
-import Img from '../components/Img';
 
 interface SignInForm {
   email: string;
@@ -10,35 +9,6 @@ interface SignInForm {
 
 export default function SignIn() {
   const navigate = useNavigate();
-
-  /** 카카오 로그인 */
-  const handleKakaoLogin = async () => {
-    try {
-      // 카카오 로그인 URL 직접 생성
-      const clientId = import.meta.env.VITE_KAKAO_REST_API_KEY;
-      if (!clientId) {
-        throw new Error('카카오 API 키가 설정되지 않았습니다.');
-      }
-
-      const redirectUri = window.location.origin + '/auth/kakao/callback';
-      const loginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
-
-      // 생성된 URL로 리다이렉트
-      window.location.href = loginUrl;
-    } catch (error) {
-      console.error('카카오 로그인 URL 생성 실패:', error);
-      alert('카카오 로그인을 준비하는 중 오류가 발생했습니다.');
-    }
-  };
-
-  /** 네이버 로그인 */
-  const handleNaverLogin = async () => {
-    try {
-    } catch (e) {
-      console.log('네이버 로그인 URL 에러', e);
-      alert('네이버 로그인을 준비하는 중 오류가 발생했습니다.');
-    }
-  };
 
   /**
    * form 상태 관리
@@ -145,20 +115,8 @@ export default function SignIn() {
           </form>
 
           <div className="mt-5 flex flex-col gap-3">
-            <button
-              onClick={handleKakaoLogin}
-              className="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#FFE500] px-5 py-3 transition-all duration-200 hover:scale-105 focus:outline-none"
-            >
-              <Img src="kakao_icon.svg" className="h-[20px] w-[20px]" alt="카카오 로그인" />
-              <span className="text-base text-black">카카오 로그인</span>
-            </button>
-            <button
-              onClick={handleNaverLogin}
-              className="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#03C75A] px-5 py-3 transition-all duration-200 hover:scale-105 focus:outline-none"
-            >
-              <Img src="naver_icon.svg" className="h-[20px] w-[20px]" alt="네이버 로그인" />
-              <span className="text-base text-white">네이버 로그인</span>
-            </button>
+            <SnsLoginButton provider="kakao" />
+            <SnsLoginButton provider="naver" />
           </div>
         </div>
 
