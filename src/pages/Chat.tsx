@@ -13,6 +13,12 @@ export default function Chat() {
   const [newMessages, setNewMessages] = useState<any[]>([]); // 새로 추가된 메시지
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
+  // textarea 자동 높이 조절
+  const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
+    element.style.height = 'auto';
+    element.style.height = Math.min(element.scrollHeight, 120) + 'px';
+  };
+
   // 채팅 상세 페이지에서만 동작해야함
   const { messages } = useGetChatDetail(id || '');
 
@@ -45,6 +51,12 @@ export default function Chat() {
 
     // 입력창 클리어
     setQuestion('');
+
+    // textarea 높이 초기화
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = '24px';
+    }
 
     // 새로운 메시지 추가
     setNewMessages(prev => {
@@ -174,11 +186,25 @@ export default function Chat() {
           <div className="theme-border-secondary theme-bg-secondary flex items-end gap-3 rounded-2xl border p-3 transition-all focus-within:border-blue-500 focus-within:shadow-lg">
             <textarea
               placeholder="메시지를 입력하세요..."
-              className="theme-text-primary flex-1 resize-none border-none bg-transparent p-2 text-sm leading-relaxed outline-none"
+              className="theme-text-primary scrollbar-hide flex-1 resize-none border-none bg-transparent text-sm leading-relaxed outline-none"
               rows={1}
-              style={{ minHeight: '24px', maxHeight: '120px' }}
+              style={{
+                minHeight: '24px',
+                maxHeight: '120px',
+                scrollbarWidth: 'none', // Firefox
+                msOverflowStyle: 'none', // IE/Edge
+              }}
               value={question}
-              onChange={e => setQuestion(e.target.value)}
+              onChange={e => {
+                setQuestion(e.target.value);
+                adjustTextareaHeight(e.target);
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault(); // 기본 동작 방지
+                  handleSend();
+                }
+              }}
               disabled={isLoading}
             />
             <button
