@@ -115,8 +115,11 @@ export default function PrivacySettings() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* 이메일 */}
       <div>
-        <label className="theme-text-secondary mb-2 block text-sm font-medium">이메일</label>
+        <label className="theme-text-secondary mb-2 block text-sm font-medium" htmlFor="email">
+          이메일
+        </label>
         <input
+          id="email"
           type="email"
           className="theme-border-secondary theme-bg-secondary theme-text-primary w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={user?.email || ''}
@@ -126,8 +129,11 @@ export default function PrivacySettings() {
 
       {/* 이름 */}
       <div>
-        <label className="theme-text-secondary mb-2 block text-sm font-medium">이름</label>
+        <label className="theme-text-secondary mb-2 block text-sm font-medium" htmlFor="name">
+          이름
+        </label>
         <input
+          id="name"
           type="text"
           {...register('displayName', {
             required: '이름을 입력해주세요.',
@@ -145,10 +151,14 @@ export default function PrivacySettings() {
         <>
           {/* 새 비밀번호 */}
           <div>
-            <label className="theme-text-secondary mb-2 block text-sm font-medium">
+            <label
+              className="theme-text-secondary mb-2 block text-sm font-medium"
+              htmlFor="newPassword"
+            >
               새 비밀번호
             </label>
             <input
+              id="newPassword"
               type="password"
               {...register('newPassword', {
                 minLength: { value: 6, message: '비밀번호는 최소 6자 이상이어야 합니다.' },
@@ -163,10 +173,14 @@ export default function PrivacySettings() {
 
           {/* 비밀번호 확인 */}
           <div>
-            <label className="theme-text-secondary mb-2 block text-sm font-medium">
+            <label
+              className="theme-text-secondary mb-2 block text-sm font-medium"
+              htmlFor="passwordConfirm"
+            >
               비밀번호 확인
             </label>
             <input
+              id="passwordConfirm"
               type="password"
               {...register('confirmPassword', {
                 validate: value => {
