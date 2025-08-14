@@ -1,10 +1,10 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import Layout from '../components/Layout';
+import Layout from '../components/layout/Layout';
 import AuthGuard from '../guards/AuthGuard';
 import Chat from '../pages/Chat';
 import KakaoCallback from '../pages/KakaoCallback';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 import NotFoundPage from '../pages/NotFoundPage';
 import NaverCallback from '../pages/NaverCallback';
 

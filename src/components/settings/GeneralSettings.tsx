@@ -1,5 +1,5 @@
-import { useThemeStore } from '../store/useThemeStore';
-import { useLanguageStore } from '../store/useLanguageStore';
+import { useThemeStore } from '../../store/useThemeStore';
+import { useLanguageStore } from '../../store/useLanguageStore';
 
 export default function GeneralSettings() {
   const { theme, setTheme } = useThemeStore(); // 테마

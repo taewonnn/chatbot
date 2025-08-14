@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import SideBar from './SideBar';
 import GlobalHeader from './GlobalHeader';
-import Modal from './Modal';
+import Modal from '../common/Modal';
 
 export default function Layout() {
   // 초기값을 화면 크기에 따라 설정

@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus, FiSearch, FiChevronDown, FiSettings, FiLogOut, FiUser } from 'react-icons/fi';
-import { useUserStore } from '../store/useUserStore';
-import useAuth from '../hooks/useAuth';
-import { useGetList } from '../hooks/useChatData';
-import { useResponsiveClick } from '../hooks/useResponsiveClick';
-import { useModalStore } from '../store/useModalStore';
-import TabModal, { SETTINGS_TABS } from './TabModal';
+import { useUserStore } from '../../store/useUserStore';
+import useAuth from '../../hooks/useAuth';
+import { useGetList } from '../../hooks/useChatData';
+import { useResponsiveClick } from '../../hooks/useResponsiveClick';
+import { useModalStore } from '../../store/useModalStore';
+import TabModal, { SETTINGS_TABS } from '../common/TabModal';
 
 interface ISideBar {
   isOpen: boolean;

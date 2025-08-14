@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInUser } from '../api/auth';
-import SnsLoginButton from '../components/SnsLoginButton';
+import SnsLoginButton from '../components/common/SnsLoginButton';
 
 interface SignInForm {
   email: string;

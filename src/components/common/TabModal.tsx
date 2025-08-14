@@ -1,7 +1,7 @@
 import { FiX } from 'react-icons/fi';
-import GeneralSettings from './GeneralSettings';
-import DetailSettings from './DetailSettings';
-import PrivacySettings from './PrivacySettings';
+import GeneralSettings from '../settings/GeneralSettings';
+import DetailSettings from '../settings/DetailSettings';
+import PrivacySettings from '../settings/PrivacySettings';
 
 interface Tab {
   id: string;

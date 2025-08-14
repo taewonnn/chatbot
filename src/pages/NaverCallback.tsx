@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function NaverCallback() {
   const navigate = useNavigate();

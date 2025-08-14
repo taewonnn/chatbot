@@ -2,7 +2,7 @@ import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useChatMessage, useGetChatDetail } from '../hooks/useChatData';
 import { useState, useEffect } from 'react';
-import MarkdownRenderer from '../components/ReactMarkdownRenderer';
+import MarkdownRenderer from '../components/common/ReactMarkdownRenderer';
 import useAutoScroll from '../hooks/useAutoScroll';
 
 export default function Chat() {

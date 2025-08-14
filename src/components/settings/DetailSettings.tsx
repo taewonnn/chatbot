@@ -1,9 +1,9 @@
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebase';
-import useAuth from '../hooks/useAuth';
+import { db } from '../../firebase/firebase';
+import useAuth from '../../hooks/useAuth';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useModalStore } from '../store/useModalStore';
+import { useModalStore } from '../../store/useModalStore';
 
 export default function DetailSettings() {
   const { user, userProfile } = useAuth();

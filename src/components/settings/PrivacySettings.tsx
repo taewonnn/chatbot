@@ -2,10 +2,10 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { updatePassword, updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebase';
-import useAuth from '../hooks/useAuth';
-import { useModalStore } from '../store/useModalStore';
-import { useUserStore } from '../store/useUserStore';
+import { db } from '../../firebase/firebase';
+import useAuth from '../../hooks/useAuth';
+import { useModalStore } from '../../store/useModalStore';
+import { useUserStore } from '../../store/useUserStore';
 
 interface FormData {
   displayName: string;
