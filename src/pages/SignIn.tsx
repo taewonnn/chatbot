@@ -4,6 +4,7 @@ import { signInUser } from '../api/auth';
 import SnsLoginButton from '../components/common/SnsLoginButton';
 import { useModalStore } from '../store/useModalStore';
 import Modal from '../components/common/Modal';
+import { handleLoginError } from '../utils/authErrorHandler';
 
 interface SignInForm {
   email: string;
@@ -32,24 +33,10 @@ export default function SignIn() {
       const user = await signInUser(data.email, data.password);
       console.log('로그인 성공:', user);
       navigate('/'); // 홈으로 이동
-    } catch (e) {
-      console.log('로그인 실패:', e);
-      if (e instanceof Error) {
-        if (e.message === '존재하지 않는 이메일입니다.') {
-          openAlertModal({ message: '존재하지 않는 이메일입니다.' });
-        } else if (e.message === 'SNS 계정입니다. SNS 로그인을 이용해주세요.') {
-          openAlertModal({ message: 'SNS 계정입니다. SNS 로그인을 이용해주세요.' });
-        } else {
-          const firebaseError = e as any;
-          if (firebaseError.code === 'auth/user-not-found') {
-            openAlertModal({ message: '존재하지 않는 이메일입니다.' });
-          } else if (firebaseError.code === 'auth/invalid-credential') {
-            openAlertModal({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
-          } else {
-            openAlertModal({ message: '로그인에 실패했습니다. 다시 시도해주세요.' });
-          }
-        }
-      }
+    } catch (error) {
+      console.log('로그인 실패:', error);
+      const errorMessage = handleLoginError(error); // 에러 메시지 처리
+      openAlertModal({ message: errorMessage }); // 모달 알럿
     }
   };
 
