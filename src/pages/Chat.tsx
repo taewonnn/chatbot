@@ -1,7 +1,7 @@
 import { FiSend } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useChatMessage, useGetChatDetail } from '../hooks/useChatData';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import MarkdownRenderer from '../components/common/ReactMarkdownRenderer';
 import useAutoScroll from '../hooks/useAutoScroll';
 
@@ -88,15 +88,14 @@ export default function Chat() {
   // id가 있을 때만 메시지 표시
   const isExistingChat = !!id;
 
+  const serverIds = useMemo(() => new Set(messages.map(m => m.id)), [messages]);
+
   // 중복 제거를 위해 메시지 합치기
   const allMessages = isExistingChat
-    ? [
-        ...messages,
-        ...newMessages.filter(
-          newMsg =>
-            !messages.some(msg => msg.content === newMsg.content && msg.role === newMsg.role),
-        ),
-      ]
+    ? // ...msessages -> Firestore에서 가져온 메시지
+      // newMessages.filter(newMsg => !newMsg.id || !serverIds.has(newMsg.id)) -> Firestore에 저장되지 않은 메시지
+      // 두 배열을 합치고 중복 제거
+      [...messages, ...newMessages.filter(newMsg => !newMsg.id || !serverIds.has(newMsg.id))]
     : newMessages;
 
   return (
