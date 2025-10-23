@@ -57,7 +57,10 @@ export default function Modal() {
       />
 
       {/* 모달 컨테이너 */}
-      <div className="theme-bg-primary theme-border-primary relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border shadow-xl">
+      <div
+        className="theme-bg-primary theme-border-primary relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border shadow-xl"
+        role="dialog"
+      >
         {/* 헤더 */}
         <div className="theme-border-primary flex items-center justify-between border-b p-6">
           <div className="flex items-center gap-3">

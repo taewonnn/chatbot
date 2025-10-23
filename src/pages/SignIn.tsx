@@ -116,6 +116,7 @@ export default function SignIn() {
           <p className="text-gray-600">
             계정이 없으신가요?{' '}
             <Link
+              aria-label="회원가입 링크"
               to="/signup"
               className="font-medium text-blue-600 transition-colors duration-200 hover:text-blue-700"
             >

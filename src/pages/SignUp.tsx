@@ -289,6 +289,7 @@ export default function SignUp() {
             <Link
               to="/signin"
               className="font-medium text-blue-600 transition-colors duration-200 hover:text-blue-700"
+              aria-label="로그인 링크"
             >
               로그인하기
             </Link>
